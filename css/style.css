@@ -309,6 +309,24 @@ p { margin: 0 0 1em; }
 
 .toggle-row { display: inline-flex; align-items: center; gap: 8px; }
 
+/* ---------- 화성 4개 구 비교 ---------- */
+.gu-card {
+  border: 1px solid var(--border); border-radius: var(--radius-s); padding: 14px 16px;
+  margin-bottom: 10px; cursor: pointer; transition: background .1s, border-color .1s;
+  background: var(--surface-1);
+}
+.gu-card:hover { background: var(--brand-wash); }
+.gu-card.selected { border-color: var(--brand); box-shadow: inset 3px 0 0 var(--brand); }
+.gu-card.focus { background: color-mix(in srgb, var(--brand) 6%, var(--surface-1)); }
+.gu-top { display: flex; align-items: center; gap: 8px; }
+.gu-dot { width: 11px; height: 11px; border-radius: 3px; flex: 0 0 auto; }
+.gu-name { font-weight: 800; font-size: 1rem; }
+.gu-pop { margin-left: auto; font-weight: 700; font-variant-numeric: tabular-nums; }
+.gu-sub { font-size: .78rem; color: var(--text-muted); margin: 5px 0 6px; line-height: 1.4; }
+.gu-meta { display: flex; flex-wrap: wrap; gap: 12px; font-size: .82rem; color: var(--text-secondary); }
+.gu-meta .est { font-size: .58rem; color: var(--text-muted); border: 1px solid var(--border); border-radius: 4px; padding: 0 3px; margin-left: 3px; vertical-align: middle; }
+.gu-note { font-size: .8rem; color: var(--text-secondary); margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--grid); }
+
 /* ---------- Table ---------- */
 .table-scroll { overflow-x: auto; }
 table.data { width: 100%; border-collapse: collapse; font-size: .92rem; }

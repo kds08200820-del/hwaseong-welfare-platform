@@ -164,11 +164,60 @@
   </div>
 </section>
 
+<!-- 화성특례시 4개 구 비교 -->
+<section class="section-tight" id="gu" style="border-top:1px solid var(--border);padding-top:44px;">
+  <div class="wrap">
+    <span class="eyebrow">화성특례시 4개 구</span>
+    <h2 style="margin-bottom:8px;">4개 구 복지 현황 비교</h2>
+    <p class="lede" style="margin-bottom:18px;">
+      2026년 2월 출범한 <b>만세구·효행구·병점구·동탄구</b>를 비교합니다.
+      우정읍·장안면은 <b>만세구</b>에 속합니다. 구를 선택하거나 지표를 바꾸면 오른쪽 차트가 갱신됩니다.
+    </p>
+    <div class="data-note">
+      <span>ℹ️</span>
+      <span><b>인구·세대·성비</b>는 경기도 공식 인구현황(2026.03) <b>실값</b>, <b>복지·외국인</b> 지표는 화성시 실제 총계(KOSIS·화성시 공식)를 구별 인구·고령·산업분포로 <b>배분한 추정치</b>입니다. 구 단위 복지 통계는 구 신설(2026.2)로 아직 화성시 단일 집계 상태입니다.</span>
+    </div>
+
+    <div class="grid grid-2" style="gap:22px;align-items:start;margin-top:22px;">
+      <!-- 좌: 구 목록 -->
+      <div class="panel">
+        <div class="panel-head"><h3>4개 구 개요</h3><span class="hint">구 클릭 → 차트 강조</span></div>
+        <div id="guList"></div>
+      </div>
+      <!-- 우: 비교 차트 -->
+      <div class="panel">
+        <div class="panel-head">
+          <h3>구별 비교 — <span id="guMetricLabel"></span></h3>
+        </div>
+        <div class="filters" style="margin:0 0 14px;padding:10px 12px;">
+          <span class="flabel">지표</span>
+          <div class="seg" id="guMetricSeg"></div>
+          <span class="toggle-row" style="margin-left:auto;">
+            <div class="seg" id="guPerSeg">
+              <button data-per="abs" class="active">절대수</button>
+              <button data-per="per">1만명당</button>
+            </div>
+          </span>
+        </div>
+        <div class="chart-box" style="height:260px;"><canvas id="chartGu"></canvas></div>
+        <div style="display:flex;align-items:center;gap:16px;margin-top:16px;padding-top:14px;border-top:1px solid var(--grid);">
+          <div class="chart-box" style="height:170px;width:170px;flex:0 0 auto;"><canvas id="chartGuDonut"></canvas></div>
+          <div style="flex:1;">
+            <div style="font-size:.85rem;font-weight:700;color:var(--text-secondary);margin-bottom:8px;" id="donutTitle">구성비</div>
+            <div id="donutLegend" class="legend" style="flex-direction:column;gap:8px;margin:0;"></div>
+          </div>
+        </div>
+        <p class="note" id="guChartNote"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <footer class="site-footer">
   <div class="wrap">
     <div class="foot-bottom" style="border:none;padding-top:0;">
       <span>© <span data-year></span> 화성복지플랫폼 사회적협동조합(준).</span>
-      <span>데이터 출처: <a href="https://www.data.go.kr" target="_blank" rel="noopener">공공데이터포털</a> · 화성시 통계 · 주민등록 인구통계 (대표 추정치)</span>
+      <span>데이터 출처: <a href="https://www.data.go.kr" target="_blank" rel="noopener">공공데이터포털</a> · KOSIS · 경기도·화성시 공식 인구현황</span>
     </div>
   </div>
 </footer>
@@ -176,6 +225,8 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="js/data.js"></script>
 <script src="js/dashboard.js"></script>
+<script src="js/hwaseong-gu.js"></script>
+<script src="js/hwaseong-gu-view.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>
