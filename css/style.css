@@ -131,12 +131,13 @@ h1 { font-weight: 600; }
   font-size: .64rem; font-weight: 600; letter-spacing: .1em;
   color: var(--text-muted); margin-top: 3px;
 }
-/* 업로드 로고 — 정사각 로고에서 심볼만 크롭해 흰 타일 아이콘으로 */
+/* 업로드 로고 심볼(사전 크롭) — 흰 타일 아이콘 */
 .brand-mark {
-  width: 44px; height: 44px; flex: 0 0 auto; border-radius: 10px; overflow: hidden;
-  background: #fff; position: relative; display: block;
+  width: 42px; height: 42px; flex: 0 0 auto; border-radius: 10px; overflow: hidden;
+  background: #fff; display: grid; place-items: center;
+  box-shadow: 0 0 0 1px var(--border);
 }
-.brand-mark img { position: absolute; width: 178%; left: -39%; top: -14%; }
+.brand-mark img { width: 100%; height: 100%; object-fit: contain; display: block; }
 .nav-links { display: flex; gap: 4px; margin-left: auto; align-items: center; }
 .nav-links a {
   color: var(--text-secondary); font-weight: 600; font-size: .95rem;
@@ -466,4 +467,35 @@ table.data td.num, table.data th.num { text-align: right; }
   .section { padding: 52px 0; }
   .cta-band { padding: 32px 22px; }
   .meter-row { grid-template-columns: 96px 1fr auto; gap: 10px; }
+}
+
+/* ---------- 모바일 최적화 & PWA ---------- */
+@media (max-width: 640px) {
+  html { -webkit-text-size-adjust: 100%; }
+  a, button { -webkit-tap-highlight-color: rgba(33,137,255,.18); }
+  .nav { height: 58px; gap: 10px; }
+  .brand-text { font-size: .95rem; }
+  .brand-text small { display: none; }
+  .hero-cine { min-height: 76vh; }
+  .hero-copy h1 { font-size: clamp(1.8rem, 8.5vw, 2.4rem); }
+  .hero-copy .lede { font-size: 1.02rem; }
+  .hero-copy .hero-cta { flex-direction: column; align-items: stretch; }
+  .hero-copy .hero-cta .btn { justify-content: center; }
+  .section { padding: 44px 0; }
+  .section-tight { padding: 32px 0; }
+  .cta-band { padding: 36px 22px; }
+  .filters { flex-wrap: wrap; gap: 8px; }
+  .filters .seg { overflow-x: auto; max-width: 100%; -webkit-overflow-scrolling: touch; }
+  .filters .seg button { white-space: nowrap; }
+  .kmap-wrap { max-width: 100%; }
+  table.data th, table.data td { padding: 9px 10px; font-size: .86rem; }
+  .stat .value { font-size: 1.8rem; }
+}
+@media (max-width: 380px) {
+  .brand-text { display: none; }
+}
+/* 설치형 앱(standalone): 노치 안전영역 */
+@media (display-mode: standalone) {
+  .site-header { padding-top: env(safe-area-inset-top); }
+  .hero-replay { bottom: calc(20px + env(safe-area-inset-bottom)); }
 }

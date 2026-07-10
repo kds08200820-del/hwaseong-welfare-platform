@@ -1,3 +1,10 @@
+/* PWA 서비스워커 등록 (설치형 앱) */
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").catch(() => {});
+  });
+}
+
 /* 공통 UI: 테마 토글, 모바일 네비, 연도, 카운트업 */
 (function () {
   // 테마 초기화
