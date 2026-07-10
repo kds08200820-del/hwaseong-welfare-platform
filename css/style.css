@@ -131,13 +131,18 @@ h1 { font-weight: 600; }
   font-size: .64rem; font-weight: 600; letter-spacing: .1em;
   color: var(--text-muted); margin-top: 3px;
 }
-/* 업로드 로고 심볼(사전 크롭) — 흰 타일 아이콘 */
-.brand-mark {
-  width: 42px; height: 42px; flex: 0 0 auto; border-radius: 10px; overflow: hidden;
-  background: #fff; display: grid; place-items: center;
-  box-shadow: 0 0 0 1px var(--border);
+/* 업로드 로고 심볼 — 배경 없는 투명 PNG (라이트/다크 자동 전환) */
+.brand-mark { width: 42px; height: 42px; flex: 0 0 auto; display: grid; place-items: center; }
+.brand-mark img { width: 100%; height: 100%; object-fit: contain; grid-area: 1 / 1; }
+.brand-mark .lm-dark { display: none; }
+@media (prefers-color-scheme: dark) {
+  .brand-mark .lm-light { display: none; }
+  .brand-mark .lm-dark { display: block; }
 }
-.brand-mark img { width: 100%; height: 100%; object-fit: contain; display: block; }
+:root[data-theme="light"] .brand-mark .lm-light { display: block; }
+:root[data-theme="light"] .brand-mark .lm-dark { display: none; }
+:root[data-theme="dark"] .brand-mark .lm-light { display: none; }
+:root[data-theme="dark"] .brand-mark .lm-dark { display: block; }
 .nav-links { display: flex; gap: 4px; margin-left: auto; align-items: center; }
 .nav-links a {
   color: var(--text-secondary); font-weight: 600; font-size: .95rem;
