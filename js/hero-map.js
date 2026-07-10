@@ -17,10 +17,10 @@
   const provs = GEO.provinces.map(p =>
     `<path class="hprov${p.short === "경기" ? " hi" : ""}" d="${p.d}"></path>`).join("");
   const zoomW = W * 0.14, zoomH = H * 0.14;
-  const markR = zoomW * 0.018;
+  const markR = zoomW * 0.016;
   const marker = `<g id="heroMarker" opacity="0" transform="translate(${mx.toFixed(1)},${my.toFixed(1)})">
-      <circle class="hmarker-ring" r="${markR * 2}" stroke-width="${markR * 0.5}"></circle>
-      <circle class="hmarker-ring" r="${markR * 3.4}" stroke-width="${markR * 0.35}" opacity="0.5"></circle>
+      <circle class="hmarker-pulse" r="${markR}"></circle>
+      <circle class="hmarker-pulse" r="${markR}" style="animation-delay:.95s"></circle>
       <circle class="hmarker-dot" r="${markR}"></circle>
     </g>`;
   svg.innerHTML = `<g>${provs}</g>${marker}`;
@@ -53,7 +53,7 @@
     if (reduce) { setVB(target); document.getElementById("heroMarker").setAttribute("opacity", "1"); label("화성 우정·장안", "복지가 가장 필요한 곳", true); revealAllStages(); return; }
 
     const t0 = performance.now();
-    const HOLD = 900, DUR = 2800;
+    const HOLD = 1000, DUR = 5600;   // 2배 느린 줌
     setTimeout(() => { stage("hs0", true); label("전국", "17개 시도 복지 데이터", true); }, 350);
 
     function frame(now) {

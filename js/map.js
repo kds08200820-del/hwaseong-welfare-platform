@@ -37,21 +37,23 @@
   }
 
   /* 색상 구간 — 값 → 램프 인덱스 (7단계 분위) */
+  function activeRamp() { return N.metricRamp(drill ? sggMetric() : metricKey); }
   function colorScale(values) {
+    const ramp = activeRamp();
     const vals = (values || N.sido.map(val)).slice().sort((a, b) => a - b);
     const min = vals[0], max = vals[vals.length - 1];
     return {
-      min, max,
+      min, max, ramp,
       color(v) {
-        if (max === min) return N.ramp[3];
+        if (max === min) return ramp[3];
         const t = (v - min) / (max - min);
-        const idx = Math.min(N.ramp.length - 1, Math.floor(t * N.ramp.length));
-        return N.ramp[idx];
+        const idx = Math.min(ramp.length - 1, Math.floor(t * ramp.length));
+        return ramp[idx];
       },
       isDark(v) {
         if (max === min) return false;
         const t = (v - min) / (max - min);
-        return Math.floor(t * N.ramp.length) >= 4; // 진한 단계부터 흰 글씨
+        return Math.floor(t * ramp.length) >= 4;
       },
     };
   }
@@ -120,7 +122,7 @@
     document.getElementById("mapNote").textContent =
       `${m.sub} — ${usePer() ? "인구 10만명당으로 정규화(지역 규모 보정). " : "시도별 절대 수치. "}마우스 호버 시 상세, 시도를 클릭하면 시군구 지도로 확대됩니다.`;
 
-    document.getElementById("legBar").innerHTML = N.ramp.map(c => `<span style="background:${c}"></span>`).join("");
+    document.getElementById("legBar").innerHTML = sc.ramp.map(c => `<span style="background:${c}"></span>`).join("");
     document.getElementById("legLow").textContent = m.key === "elderlyRate" ? sc.min + "%" : fmt(usePer() ? sc.min : Math.round(sc.min));
     document.getElementById("legHigh").textContent = m.key === "elderlyRate" ? sc.max + "%" : fmt(usePer() ? sc.max : Math.round(sc.max));
   }
@@ -152,7 +154,7 @@
     document.getElementById("mapHint").textContent = `2024~2025 · 시군구 단위 · 단위 ${N.metric(mk).unit}`;
     document.getElementById("mapNote").textContent =
       `${sido.name}의 시군구별 ${SGG_LABEL[mk]} 분포입니다. 마우스를 올리면 상세, 회색은 데이터 미제공(통합시 구 등).`;
-    document.getElementById("legBar").innerHTML = N.ramp.map(c => `<span style="background:${c}"></span>`).join("");
+    document.getElementById("legBar").innerHTML = sc.ramp.map(c => `<span style="background:${c}"></span>`).join("");
     document.getElementById("legLow").textContent = fmt(Math.round(sc.min));
     document.getElementById("legHigh").textContent = fmt(Math.round(sc.max));
   }

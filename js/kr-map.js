@@ -104,3 +104,4 @@ const KRGeo = (function () {
 
   return { build, buildSigungu, GEO2SHORT, SHORT2P };
 })();
+if (typeof window !== "undefined") window.KRGeo = KRGeo;

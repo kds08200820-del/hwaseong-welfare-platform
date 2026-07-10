@@ -52,8 +52,21 @@ const NATIONWIDE_DATA = {
     { code: "50", name: "제주특별자치도",   short: "제주", col: 1, row: 6, population: 668000,   elderlyRate: 18.0, seniorLeisure: 502,   daycare: 378,  disabled: 36800,  basicLivelihood: 37154,  seniorAlone: 25169,  foodbank: 8 },
   ],
 
-  /* 순차 팔레트(삼성 블루) — 낮음 밝음 → 높음 진함 */
+  /* 순차 팔레트(기본 삼성 블루) — 낮음 밝음 → 높음 진함 */
   ramp: ["#dce6fb", "#b3ccf6", "#8ab0f0", "#5a8de8", "#2f6ad6", "#1e4bb0", "#12307a"],
+
+  /* 지표별 고유 색상 램프 — 각 데이터를 색으로 구별 */
+  ramps: {
+    seniorLeisure:   ["#dce6fb", "#b3ccf6", "#8ab0f0", "#5a8de8", "#2f6ad6", "#1e4bb0", "#12307a"], // 블루
+    daycare:         ["#d8f0e4", "#ade0c8", "#7ccdaa", "#4bb488", "#2f9c6e", "#1f7d56", "#14603f"], // 그린
+    foodbank:        ["#fde4d0", "#f9c8a3", "#f3a870", "#e8823f", "#d5641f", "#ad4d13", "#83380c"], // 오렌지
+    disabled:        ["#e6e0f7", "#cabff0", "#a998e4", "#8872d6", "#6b52c4", "#513aa0", "#3a2878"], // 바이올렛
+    basicLivelihood: ["#fbdcdc", "#f4b3b3", "#ea8585", "#dd5a5a", "#c93b3b", "#a52a2a", "#7d1d1d"], // 레드
+    seniorAlone:     ["#f7dced", "#eeb6d6", "#e08bbb", "#cd63a0", "#b44184", "#8f2f68", "#6b214d"], // 마젠타
+    population:      ["#e2e5ea", "#c3c9d3", "#9fa8b8", "#79879b", "#586880", "#414f66", "#2c374a"], // 슬레이트
+    elderlyRate:     ["#fdeecd", "#f9d996", "#f0be5c", "#e09e2f", "#c47f18", "#9c6210", "#74470b"], // 앰버
+  },
+  metricRamp(key) { return this.ramps[key] || this.ramp; },
 
   metric(key) { return this.metrics.find(m => m.key === key); },
 
