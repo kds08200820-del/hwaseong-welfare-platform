@@ -1,0 +1,17 @@
+{
+  "name": "hwaseong-welfare-proxy",
+  "version": "1.0.0",
+  "description": "화성복지플랫폼 — data.go.kr 공공데이터 OpenAPI 연동 프록시 서버",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  }
+}

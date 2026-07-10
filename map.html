@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>전국 복지 지도 — 화성복지플랫폼</title>
+<meta name="description" content="전국 17개 시도 복지시설·복지지표 분포를 지도로 시각화. 노인여가복지시설·어린이집·등록장애인·인구·고령화율을 시도별로 구분해 확인.">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap nav">
+    <a class="brand" href="index.html"><span class="logo">복</span><span class="brand-text">화성복지플랫폼<small>Social Welfare Platform</small></span></a>
+    <button class="theme-btn" onclick="toggleTheme()" aria-label="테마 전환">◐</button>
+    <button class="nav-toggle" onclick="toggleNav()" aria-label="메뉴">☰</button>
+    <nav class="nav-links" id="navLinks">
+      <a href="index.html">홈</a>
+      <a href="dashboard.html">지역 대시보드</a>
+      <a href="map.html" class="active">전국 지도</a>
+      <a href="services.html">복지 서비스</a>
+      <a href="about.html">조합 소개</a>
+    </nav>
+  </div>
+</header>
+
+<section class="section-tight">
+  <div class="wrap">
+    <span class="eyebrow">전국 복지 현황 지도</span>
+    <h2 style="margin-bottom:8px;">전국 시도별 복지시설·복지지표 분포</h2>
+    <p class="lede" style="margin-bottom:20px;">
+      노인여가복지시설·어린이집·등록장애인·인구·고령화율을 <b>시도별로 구분</b>해 지도에 표시합니다.
+      시설 종류를 바꾸면 지도 색상과 순위가 함께 갱신됩니다. 타일을 클릭하면 상세를 볼 수 있습니다.
+    </p>
+
+    <div class="data-note">
+      <span>ℹ️</span>
+      <span><b>데이터</b> — 노인여가복지시설(경로당·노인복지관 등, 2023)·어린이집(2025)·등록장애인(2025)·인구(2025)·고령화율(2024) 모두 <b>KOSIS·보건복지부·행정안전부 공식 통계</b>입니다. 지도는 실제 지리 형태가 아닌 <b>시도 타일그리드</b>(방위 기반 격자)입니다.</span>
+    </div>
+
+    <!-- 전국 요약 -->
+    <div class="grid grid-4" id="natStats" style="margin-top:22px;"></div>
+
+    <!-- 컨트롤 -->
+    <div class="filters" style="margin-top:22px;">
+      <span class="flabel">시설·지표</span>
+      <div class="seg" id="metricSeg"></div>
+      <span class="toggle-row" style="margin-left:auto;">
+        <span class="flabel" style="margin:0;">표시</span>
+        <div class="seg" id="normSeg">
+          <button data-norm="abs" class="active">절대수</button>
+          <button data-norm="per">인구 10만명당</button>
+        </div>
+      </span>
+    </div>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="wrap grid grid-2" style="gap:22px;align-items:start;">
+
+    <!-- 지도 -->
+    <div class="panel">
+      <div class="panel-head">
+        <h3 id="mapTitle">노인여가복지시설 분포</h3>
+        <span class="hint" id="mapHint"></span>
+      </div>
+      <div class="kmap" id="kmap"></div>
+      <div class="map-legend">
+        <span class="ends" id="legLow">낮음</span>
+        <span class="bar" id="legBar"></span>
+        <span class="ends" id="legHigh">높음</span>
+      </div>
+      <p class="note" id="mapNote"></p>
+    </div>
+
+    <!-- 순위 + 상세 -->
+    <div class="grid" style="gap:22px;">
+      <div class="panel">
+        <div class="panel-head">
+          <h3>시도 순위</h3>
+          <span class="hint" id="rankHint"></span>
+        </div>
+        <div class="rank-list" id="rankList"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h3 id="detailTitle">시도 상세</h3>
+          <span class="hint">타일·순위 클릭</span>
+        </div>
+        <div class="region-detail" id="regionDetail"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 시설 구성 비교 차트 -->
+<section class="section-tight">
+  <div class="wrap">
+    <div class="panel">
+      <div class="panel-head">
+        <h3>시도별 복지시설 구성 비교</h3>
+        <span class="hint">노인여가복지시설 · 어린이집 (개소)</span>
+      </div>
+      <div class="chart-box" style="height:360px;"><canvas id="chartComposition"></canvas></div>
+      <p class="note">인구가 많은 수도권은 어린이집이, 고령·농촌 지역(전남·경북·전북 등)은 노인여가시설이 상대적으로 많은 대비를 보입니다.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 데이터 표 -->
+<section class="section-tight">
+  <div class="wrap">
+    <div class="panel">
+      <div class="panel-head">
+        <h3>전국 시도별 복지 데이터 — 표</h3>
+        <span class="hint">접근성 대체 표 · 클릭하여 정렬</span>
+      </div>
+      <div class="table-scroll">
+        <table class="data" id="natTable">
+          <thead><tr id="natTableHead"></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="note">출처: KOSIS·보건복지부·행정안전부 공식 통계. 노인여가시설 2023 · 어린이집·등록장애인·인구 2025 · 고령화율 2024.</p>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-bottom" style="border:none;padding-top:0;">
+      <span>© <span data-year></span> 화성복지플랫폼 사회적협동조합(준).</span>
+      <span>전국 복지 데이터: <a href="https://kosis.kr" target="_blank" rel="noopener">KOSIS</a> · <a href="https://www.data.go.kr" target="_blank" rel="noopener">공공데이터포털</a></span>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="js/nationwide.js"></script>
+<script src="js/map.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

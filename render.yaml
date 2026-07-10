@@ -1,0 +1,19 @@
+# Render(무료 Node 호스팅) 배포 설정 — https://render.com
+# GitHub 저장소를 연결하고 이 파일을 감지시키면 자동 배포됩니다.
+services:
+  - type: web
+    name: hwaseong-welfare-platform
+    runtime: node
+    plan: free
+    buildCommand: npm install --prefix server
+    startCommand: node server/server.js
+    envVars:
+      # KOSIS 실시간 연동 시 대시보드에서 값 입력 (선택)
+      - key: KOSIS_SENIOR_URL
+        sync: false
+      - key: KOSIS_DAYCARE_URL
+        sync: false
+      - key: KOSIS_DISABLED_URL
+        sync: false
+      - key: DATA_GO_KR_KEY
+        sync: false

@@ -1,0 +1,12 @@
+{
+  "name": "hwaseong-welfare-platform",
+  "version": "1.0.0",
+  "description": "화성복지플랫폼 — 지역·전국 복지 데이터 통합 시각화 플랫폼 (홈페이지 + API 프록시)",
+  "type": "module",
+  "scripts": {
+    "postinstall": "npm --prefix server install",
+    "start": "npm --prefix server start",
+    "dev": "npm --prefix server run dev"
+  },
+  "engines": { "node": ">=18" }
+}
