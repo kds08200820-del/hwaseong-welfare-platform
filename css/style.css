@@ -153,7 +153,7 @@ h1 { font-weight: 600; }
 }
 .btn:hover { text-decoration: none; }
 .btn:active { transform: translateY(1px); }
-.btn-primary { background: var(--brand); color: #fff; box-shadow: var(--shadow); }
+.btn-primary { background: var(--brand); color: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.14); letter-spacing: .01em; }
 .btn-primary:hover { background: var(--brand-strong); }
 .btn-ghost { background: var(--surface-1); color: var(--text-primary); border-color: var(--border); }
 .btn-ghost:hover { background: var(--brand-wash); }
@@ -356,14 +356,24 @@ table.data td.num, table.data th.num { text-align: right; }
 .step h3 { font-size: 1.05rem; margin-bottom: 3px; }
 .step p { margin-bottom: 0; color: var(--text-secondary); font-size: .95rem; }
 
-/* ---------- CTA band ---------- */
+/* ---------- CTA band — 깊은 에스프레소 + 얇은 브론즈 악센트 ---------- */
 .cta-band {
-  background: linear-gradient(135deg, var(--brand), var(--brand-strong));
-  color: #fff; border-radius: 20px; padding: 46px; text-align: center;
+  position: relative; overflow: hidden;
+  background:
+    radial-gradient(120% 160% at 0% 0%, #38322b 0%, #221e19 45%, #17130f 100%);
+  color: #f3eee5; border-radius: 20px; padding: 56px 48px; text-align: center;
+  border: 1px solid rgba(201, 160, 109, 0.28);
 }
-.cta-band h2 { color: #fff; }
-.cta-band p { color: rgba(255,255,255,.9); max-width: 60ch; margin: 0 auto 24px; }
-.cta-band .btn-ghost { background: #fff; color: var(--brand); border-color: transparent; }
+.cta-band::before {
+  content: ""; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 64px; height: 3px; background: var(--accent); border-radius: 0 0 3px 3px;
+}
+.cta-band h2 { color: #fff; letter-spacing: -0.01em; }
+.cta-band p { color: rgba(243,238,229,.72); max-width: 58ch; margin: 0 auto 26px; }
+.cta-band .btn-ghost {
+  background: transparent; color: #f3eee5; border: 1px solid rgba(243,238,229,.38);
+}
+.cta-band .btn-ghost:hover { background: rgba(243,238,229,.10); border-color: rgba(243,238,229,.7); }
 
 /* ---------- Footer ---------- */
 .site-footer { background: var(--surface-1); border-top: 1px solid var(--border); padding: 48px 0 32px; margin-top: 40px; }
