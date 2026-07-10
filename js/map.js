@@ -43,9 +43,9 @@
   function renderNatStats() {
     const el = document.getElementById("natStats");
     el.innerHTML = `
-      <div class="stat"><div class="label">노인여가복지시설</div><div class="value">${fmt(N.national("seniorLeisure"))}<span class="unit">개소</span></div><div class="sub">경로당·복지관 등 · 2023</div></div>
+      <div class="stat"><div class="label">노인여가복지시설</div><div class="value">${fmt(N.national("seniorLeisure"))}<span class="unit">개소</span></div><div class="sub">경로당·복지관 등 · 2024</div></div>
       <div class="stat"><div class="label">어린이집</div><div class="value">${fmt(N.national("daycare"))}<span class="unit">개소</span></div><div class="sub">전국 · 2025</div></div>
-      <div class="stat"><div class="label">등록장애인</div><div class="value">${(N.national("disabled")/10000).toFixed(0)}<span class="unit">만명</span></div><div class="sub">전국 · 2025</div></div>
+      <div class="stat"><div class="label">푸드뱅크·마켓</div><div class="value">${fmt(N.national("foodbank"))}<span class="unit">개소</span></div><div class="sub">먹거리 지원 · 추정</div></div>
       <div class="stat"><div class="label">전국 고령화율</div><div class="value">${N.national("elderlyRate")}<span class="unit">%</span></div><div class="sub">65세+ · 2024</div></div>`;
   }
 
@@ -56,33 +56,74 @@
       `<button data-metric="${m.key}" class="${m.key === metricKey ? "active" : ""}">${m.short}</button>`).join("");
   }
 
-  /* ---------- 지도 ---------- */
+  /* ---------- 실제 지도(SVG 추로플레스) ---------- */
+  let GEO = null;
+  const shortToSido = {};
+  N.sido.forEach(s => { shortToSido[s.short] = s; });
+
+  function dispVal(s) {
+    const m = N.metric(metricKey), v = val(s);
+    return m.key === "elderlyRate" ? v + "%" : (usePer() ? v : fmt(v));
+  }
+
   function renderMap() {
-    const map = document.getElementById("kmap");
-    const sc = colorScale();
+    const wrap = document.getElementById("kmap");
     const m = N.metric(metricKey);
-    map.innerHTML = N.sido.map(s => {
-      const v = val(s);
-      const dark = sc.isDark(v);
-      const sel = s.code === selected ? " selected" : "";
-      const disp = m.key === "elderlyRate" ? v + "%" : (usePer() ? v : fmt(v));
-      return `<div class="ktile${dark ? " on-dark" : ""}${sel}" role="button" tabindex="0"
-                data-code="${s.code}" title="${s.name}: ${disp} ${unitLabel()}"
-                style="grid-column:${s.col};grid-row:${s.row};background:${sc.color(v)};">
-                <span class="kt-name">${s.short}</span>
-                <span class="kt-val">${disp}</span>
-              </div>`;
-    }).join("");
+    const sc = colorScale();
+    if (!GEO && window.KRGeo) GEO = KRGeo.build();
 
-    document.getElementById("mapTitle").textContent = `${m.label} 분포`;
+    if (GEO) {
+      const paths = GEO.provinces.map(p => {
+        const s = shortToSido[p.short];
+        if (!s) return "";
+        const v = val(s);
+        const sel = s.code === selected ? " selected" : "";
+        return `<path class="province${sel}" d="${p.d}" fill="${sc.color(v)}" data-short="${p.short}"></path>`;
+      }).join("");
+      const labels = GEO.provinces.map(p => {
+        const s = shortToSido[p.short];
+        if (!s) return "";
+        const v = val(s);
+        const ink = sc.isDark(v) ? "#fff" : "#0b0b0b";
+        const stroke = sc.isDark(v) ? "rgba(0,0,0,.25)" : "rgba(255,255,255,.7)";
+        return `<text class="map-label" x="${p.cx.toFixed(0)}" y="${p.cy.toFixed(0)}"
+                  text-anchor="middle" fill="${ink}" stroke="${stroke}" stroke-width="2.5"
+                  style="pointer-events:none">${p.short}<tspan class="mv" x="${p.cx.toFixed(0)}" dy="15">${dispVal(s)}</tspan></text>`;
+      }).join("");
+      wrap.innerHTML = `<svg viewBox="${GEO.viewBox}" role="img" aria-label="대한민국 시도별 ${m.label} 지도">
+        <g>${paths}</g><g>${labels}</g></svg>`;
+    } else {
+      wrap.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:40px;">지도 데이터를 불러오지 못했습니다.</p>';
+    }
+
+    document.getElementById("mapTitle").innerHTML =
+      `${m.label} 분포 <span class="badge ${m.tag === "official" ? "good" : "warning"}" style="font-size:.62rem;">${m.tag === "official" ? "공식" : "추정"}</span>`;
     document.getElementById("mapHint").textContent = `${m.year} · 단위 ${unitLabel()}`;
-    document.getElementById("mapNote").textContent = `${m.sub} — ${usePer() ? "인구 10만명당으로 정규화한 값입니다(지역 규모 보정)." : "시도별 절대 수치입니다."}`;
+    document.getElementById("mapNote").textContent =
+      `${m.sub} — ${usePer() ? "인구 10만명당으로 정규화(지역 규모 보정). " : "시도별 절대 수치. "}지도 위에 마우스를 올리면 상세가 표시됩니다.`;
 
-    // 범례 그라디언트
     document.getElementById("legBar").innerHTML = N.ramp.map(c => `<span style="background:${c}"></span>`).join("");
     document.getElementById("legLow").textContent = m.key === "elderlyRate" ? sc.min + "%" : fmt(usePer() ? sc.min : Math.round(sc.min));
     document.getElementById("legHigh").textContent = m.key === "elderlyRate" ? sc.max + "%" : fmt(usePer() ? sc.max : Math.round(sc.max));
   }
+
+  /* 지도 툴팁 */
+  function showTip(short, evt) {
+    const s = shortToSido[short]; if (!s) return;
+    const tip = document.getElementById("mapTip");
+    const per = (k) => (s[k] / s.population * 100000).toFixed(1);
+    const m = N.metric(metricKey);
+    tip.innerHTML = `<div class="tt-name">${s.name}</div>
+      <div class="tt-row"><span class="tk">${m.label}</span><span class="tv tt-hi">${dispVal(s)} ${unitLabel()}</span></div>
+      <div class="tt-row"><span class="tk">총인구</span><span class="tv">${fmt(s.population)}명</span></div>
+      <div class="tt-row"><span class="tk">고령화율</span><span class="tv">${s.elderlyRate}%</span></div>
+      <div class="tt-row"><span class="tk">노인여가시설</span><span class="tv">${fmt(s.seniorLeisure)} · 10만명당 ${per("seniorLeisure")}</span></div>`;
+    const wrap = document.getElementById("kmap").getBoundingClientRect();
+    tip.style.left = (evt.clientX - wrap.left) + "px";
+    tip.style.top = (evt.clientY - wrap.top) + "px";
+    tip.hidden = false;
+  }
+  function hideTip() { document.getElementById("mapTip").hidden = true; }
 
   /* ---------- 순위 ---------- */
   function renderRank() {
@@ -195,8 +236,10 @@
     renderDynamic();
   });
   function pick(code) { selected = code; renderMap(); renderRank(); renderDetail(); }
-  document.getElementById("kmap").addEventListener("click", (e) => { const t = e.target.closest(".ktile"); if (t) pick(t.dataset.code); });
-  document.getElementById("kmap").addEventListener("keydown", (e) => { if ((e.key === "Enter" || e.key === " ") && e.target.dataset.code) { e.preventDefault(); pick(e.target.dataset.code); } });
+  const kmap = document.getElementById("kmap");
+  kmap.addEventListener("click", (e) => { const t = e.target.closest(".province"); if (t) pick(shortToSido[t.dataset.short].code); });
+  kmap.addEventListener("mousemove", (e) => { const t = e.target.closest(".province"); if (t) showTip(t.dataset.short, e); else hideTip(); });
+  kmap.addEventListener("mouseleave", hideTip);
   document.getElementById("rankList").addEventListener("click", (e) => { const r = e.target.closest(".rank-row"); if (r) pick(r.dataset.code); });
   document.querySelector("#natTable tbody").addEventListener("click", (e) => { const r = e.target.closest("tr"); if (r) pick(r.dataset.code); });
   document.getElementById("natTableHead").addEventListener("click", (e) => {

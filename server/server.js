@@ -138,6 +138,7 @@ const SIDO_ALIAS = {
   "경상북도": "경북", "경상남도": "경남", "제주특별자치도": "제주", "제주도": "제주",
 };
 const toShort = (nm) => SIDO_ALIAS[nm] || (nm || "").replace(/(특별시|광역시|특별자치시|특별자치도|도)$/g, "");
+const VALID_SHORTS = new Set(["서울","부산","대구","인천","광주","대전","울산","세종","경기","강원","충북","충남","전북","전남","경북","경남","제주"]);
 
 async function fetchKosisUrl(url) {
   const res = await fetch(url, { headers: { Accept: "application/json" } });
@@ -164,7 +165,7 @@ app.get("/api/nationwide", async (req, res) => {
         const rows = await fetchKosisUrl(u);
         rows.forEach(r => {
           const short = toShort(r.C1_NM);
-          if (!short) return;
+          if (!VALID_SHORTS.has(short)) return; // 전국·시군구 행 제외 (시도만)
           (byShort[short] ||= { name: short })[key] = Number(String(r.DT).replace(/[^\d.]/g, "")) || 0;
         });
       });

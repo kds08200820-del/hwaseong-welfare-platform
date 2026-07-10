@@ -60,12 +60,13 @@
   <div class="wrap grid grid-2" style="gap:22px;align-items:start;">
 
     <!-- 지도 -->
-    <div class="panel">
+    <div class="panel" style="position:relative;">
       <div class="panel-head">
         <h3 id="mapTitle">노인여가복지시설 분포</h3>
         <span class="hint" id="mapHint"></span>
       </div>
-      <div class="kmap" id="kmap"></div>
+      <div class="kmap-wrap" id="kmap"></div>
+      <div class="map-tip" id="mapTip" hidden></div>
       <div class="map-legend">
         <span class="ends" id="legLow">낮음</span>
         <span class="bar" id="legBar"></span>
@@ -139,6 +140,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="js/nationwide.js"></script>
+<script src="js/kr-topo.js"></script>
+<script src="js/kr-map.js"></script>
 <script src="js/map.js"></script>
 <script src="js/main.js"></script>
 </body>
