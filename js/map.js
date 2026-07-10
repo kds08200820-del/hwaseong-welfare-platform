@@ -49,9 +49,9 @@
         return N.ramp[idx];
       },
       isDark(v) {
-        if (max === min) return true;
+        if (max === min) return false;
         const t = (v - min) / (max - min);
-        return Math.floor(t * N.ramp.length) >= 3; // 진한 3단계부터 흰 글씨
+        return Math.floor(t * N.ramp.length) >= 4; // 진한 단계부터 흰 글씨
       },
     };
   }

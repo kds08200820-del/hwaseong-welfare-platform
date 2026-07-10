@@ -52,8 +52,8 @@ const NATIONWIDE_DATA = {
     { code: "50", name: "제주특별자치도",   short: "제주", col: 1, row: 6, population: 668000,   elderlyRate: 18.0, seniorLeisure: 502,   daycare: 378,  disabled: 36800,  basicLivelihood: 37154,  seniorAlone: 25169,  foodbank: 8 },
   ],
 
-  /* 순차 팔레트(블루 100→700) — 낮음 밝음 → 높음 진함 */
-  ramp: ["#cde2fb", "#9ec5f4", "#6da7ec", "#3987e5", "#256abf", "#184f95", "#0d366b"],
+  /* 순차 팔레트(브론즈/세피아) — 낮음 밝음 → 높음 진함 (테마 통일) */
+  ramp: ["#f0e6d4", "#e2cba6", "#d1ac78", "#bd8d52", "#a3703a", "#83572b", "#5f3e1e"],
 
   metric(key) { return this.metrics.find(m => m.key === key); },
 

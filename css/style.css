@@ -5,22 +5,22 @@
    ============================================================= */
 
 :root {
-  /* Surfaces & ink */
-  --page:            #f9f9f7;
-  --surface-1:       #ffffff;
-  --surface-2:       #fcfcfb;
-  --text-primary:    #0b0b0b;
-  --text-secondary:  #52514e;
-  --text-muted:      #898781;
-  --border:          rgba(11, 11, 11, 0.10);
-  --grid:            #e1e0d9;
+  /* Surfaces & ink — 따뜻한 크림/차콜 (에디토리얼) */
+  --page:            #f4f1ea;
+  --surface-1:       #fbf9f4;
+  --surface-2:       #efeade;
+  --text-primary:    #201c15;
+  --text-secondary:  #5c554a;
+  --text-muted:      #8f8779;
+  --border:          rgba(32, 28, 21, 0.12);
+  --grid:            #e5dfd2;
 
-  /* Brand — 신뢰(블루) + 따뜻함(주황 액센트) */
-  --brand:           #1c5cab;
-  --brand-strong:    #184f95;
-  --brand-soft:      #cde2fb;
-  --brand-wash:      #eef5fd;
-  --accent:          #eb6834;
+  /* Brand — 브론즈/골드 (우아·따뜻) */
+  --brand:           #a8794f;
+  --brand-strong:    #8a6038;
+  --brand-soft:      #e6d8c2;
+  --brand-wash:      #f1e9db;
+  --accent:          #c08a52;
 
   /* 데이터 시각화 카테고리 (고정 순서 — 순환 금지) */
   --series-1: #2a78d6;  /* blue */
@@ -47,38 +47,38 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --page:           #0d0d0d;
-    --surface-1:      #1a1a19;
-    --surface-2:      #181817;
-    --text-primary:   #ffffff;
-    --text-secondary: #c3c2b7;
-    --text-muted:     #898781;
-    --border:         rgba(255, 255, 255, 0.10);
-    --grid:           #2c2c2a;
-    --brand:          #3987e5;
-    --brand-strong:   #256abf;
-    --brand-soft:     #184f95;
-    --brand-wash:     #14243a;
+    --page:           #14110d;
+    --surface-1:      #201c16;
+    --surface-2:      #1a1712;
+    --text-primary:   #f6f2ea;
+    --text-secondary: #c9bfae;
+    --text-muted:     #928a7b;
+    --border:         rgba(246, 242, 234, 0.12);
+    --grid:           #332e26;
+    --brand:          #c9a06d;
+    --brand-strong:   #a8794f;
+    --brand-soft:     #4a3b28;
+    --brand-wash:     #241d14;
     --series-1: #3987e5; --series-2: #199e70; --series-3: #c98500;
     --series-4: #008300; --series-5: #9085e9; --series-6: #e66767;
     --series-7: #d55181; --series-8: #d95926;
-    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 24px rgba(0,0,0,.4);
+    --shadow: 0 1px 2px rgba(0,0,0,.35), 0 8px 28px rgba(0,0,0,.5);
   }
 }
 
 /* Manual theme override via [data-theme] */
 :root[data-theme="dark"] {
-  --page:#0d0d0d;--surface-1:#1a1a19;--surface-2:#181817;--text-primary:#fff;
-  --text-secondary:#c3c2b7;--text-muted:#898781;--border:rgba(255,255,255,.10);
-  --grid:#2c2c2a;--brand:#3987e5;--brand-strong:#256abf;--brand-soft:#184f95;
-  --brand-wash:#14243a;--series-1:#3987e5;--series-2:#199e70;--series-3:#c98500;
+  --page:#14110d;--surface-1:#201c16;--surface-2:#1a1712;--text-primary:#f6f2ea;
+  --text-secondary:#c9bfae;--text-muted:#928a7b;--border:rgba(246,242,234,.12);
+  --grid:#332e26;--brand:#c9a06d;--brand-strong:#a8794f;--brand-soft:#4a3b28;
+  --brand-wash:#241d14;--series-1:#3987e5;--series-2:#199e70;--series-3:#c98500;
   --series-4:#008300;--series-5:#9085e9;--series-6:#e66767;--series-7:#d55181;--series-8:#d95926;
 }
 :root[data-theme="light"] {
-  --page:#f9f9f7;--surface-1:#fff;--surface-2:#fcfcfb;--text-primary:#0b0b0b;
-  --text-secondary:#52514e;--text-muted:#898781;--border:rgba(11,11,11,.10);
-  --grid:#e1e0d9;--brand:#1c5cab;--brand-strong:#184f95;--brand-soft:#cde2fb;
-  --brand-wash:#eef5fd;--series-1:#2a78d6;--series-2:#1baf7a;--series-3:#eda100;
+  --page:#f4f1ea;--surface-1:#fbf9f4;--surface-2:#efeade;--text-primary:#201c15;
+  --text-secondary:#5c554a;--text-muted:#8f8779;--border:rgba(32,28,21,.12);
+  --grid:#e5dfd2;--brand:#a8794f;--brand-strong:#8a6038;--brand-soft:#e6d8c2;
+  --brand-wash:#f1e9db;--accent:#c08a52;--series-1:#2a78d6;--series-2:#1baf7a;--series-3:#eda100;
   --series-4:#008300;--series-5:#4a3aa7;--series-6:#e34948;--series-7:#e87ba4;--series-8:#eb6834;
 }
 
@@ -103,9 +103,12 @@ p { margin: 0 0 1em; }
 .section { padding: 72px 0; }
 .section-tight { padding: 44px 0; }
 .eyebrow {
-  display: inline-block; font-size: .8rem; font-weight: 700; letter-spacing: .08em;
-  text-transform: uppercase; color: var(--brand); margin-bottom: 10px;
+  display: inline-flex; align-items: center; gap: 10px; font-size: .78rem; font-weight: 700;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--brand); margin-bottom: 14px;
 }
+.eyebrow::before { content: ""; width: 26px; height: 2px; background: var(--brand); display: inline-block; }
+h1, h2, h3 { font-weight: 700; }
+h1 { font-weight: 600; }
 .lede { font-size: 1.12rem; color: var(--text-secondary); max-width: 62ch; }
 
 /* ---------- Header / Nav ---------- */
