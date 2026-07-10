@@ -157,7 +157,9 @@
       <div class="rd-metric"><span class="k">고령화율 (65세+, 2024)</span><span class="v">${s.elderlyRate}%</span></div>
       <div class="rd-metric"><span class="k">노인여가복지시설 (2023)</span><span class="v">${fmt(s.seniorLeisure)}개소 <span style="color:var(--text-muted);font-weight:500;">(10만명당 ${per("seniorLeisure")})</span></span></div>
       <div class="rd-metric"><span class="k">어린이집 (2025)</span><span class="v">${fmt(s.daycare)}개소 <span style="color:var(--text-muted);font-weight:500;">(10만명당 ${per("daycare")})</span></span></div>
-      <div class="rd-metric"><span class="k">등록장애인 (2025)</span><span class="v">${fmt(s.disabled)}명 <span style="color:var(--text-muted);font-weight:500;">(인구대비 ${(s.disabled/s.population*100).toFixed(1)}%)</span></span></div>`;
+      <div class="rd-metric"><span class="k">등록장애인 (2025)</span><span class="v">${fmt(s.disabled)}명 <span style="color:var(--text-muted);font-weight:500;">(인구대비 ${(s.disabled/s.population*100).toFixed(1)}%)</span></span></div>
+      <div class="rd-metric"><span class="k">기초생활수급자 (2024)</span><span class="v">${fmt(s.basicLivelihood)}명 <span style="color:var(--text-muted);font-weight:500;">(수급률 ${(s.basicLivelihood/s.population*100).toFixed(1)}%)</span></span></div>
+      <div class="rd-metric"><span class="k">푸드뱅크·마켓 (추정)</span><span class="v">${fmt(s.foodbank)}개소</span></div>`;
   }
 
   /* ---------- 시설 구성 비교 차트 ---------- */
@@ -201,6 +203,8 @@
       { k: "seniorLeisure", label: "노인여가시설", num: true },
       { k: "daycare", label: "어린이집", num: true },
       { k: "disabled", label: "등록장애인", num: true },
+      { k: "basicLivelihood", label: "기초수급", num: true },
+      { k: "foodbank", label: "푸드뱅크", num: true },
     ];
     head.innerHTML = cols.map(c => `<th class="${c.num ? "num" : ""}" data-sort="${c.k}" style="cursor:pointer;">${c.label}${sortKey === c.k ? (sortDir < 0 ? " ▼" : " ▲") : ""}</th>`).join("");
     let rows = [...N.sido];
@@ -214,6 +218,8 @@
         <td class="num">${fmt(s.seniorLeisure)}</td>
         <td class="num">${fmt(s.daycare)}</td>
         <td class="num">${fmt(s.disabled)}</td>
+        <td class="num">${fmt(s.basicLivelihood)}</td>
+        <td class="num">${fmt(s.foodbank)}</td>
       </tr>`).join("");
   }
 
