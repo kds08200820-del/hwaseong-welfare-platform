@@ -6,6 +6,16 @@
 경기도 화성시 **우정읍·장안면**의 인구·복지 현황·필요도를 통합하여
 시각화하고, 복지 서비스와 자원을 분야별로 정리해 필요한 사람에게 연결합니다.
 
+## 🌐 라이브 사이트
+
+- **홈페이지(공개):** https://kds08200820-del.github.io/hwaseong-welfare-platform/
+- **전국 복지 지도:** https://kds08200820-del.github.io/hwaseong-welfare-platform/map.html
+- **GitHub 저장소:** https://github.com/kds08200820-del/hwaseong-welfare-platform
+
+> GitHub Pages는 정적 호스팅이라 **번들된 공식 통계**로 동작합니다(모두 실데이터).
+> 실시간 API 프록시(`/api/*`)까지 쓰려면 아래 **Render 배포**로 Node 서버를
+> 올리고 인증키를 넣으면 됩니다.
+
 ---
 
 ## 📁 구성
