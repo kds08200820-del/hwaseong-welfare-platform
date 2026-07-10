@@ -127,6 +127,7 @@ const KOSIS_URLS = {
   daycare: process.env.KOSIS_DAYCARE_URL || "",
   disabled: process.env.KOSIS_DISABLED_URL || "",
   basicLivelihood: process.env.KOSIS_BASIC_URL || "",
+  seniorAlone: process.env.KOSIS_ALONE_URL || "",
 };
 const KOSIS_ON = Object.values(KOSIS_URLS).some(Boolean);
 
