@@ -70,7 +70,8 @@ const KRGeo = (function () {
       });
       p.d = d; p.cx = best[0]; p.cy = best[1];
     });
-    return { items, viewBox: `0 0 ${VBW.toFixed(0)} ${VBH.toFixed(0)}`, w: VBW, h: VBH };
+    return { items, viewBox: `0 0 ${VBW.toFixed(0)} ${VBH.toFixed(0)}`, w: VBW, h: VBH,
+      project, bounds: { minX, maxX, minY, maxY, kx, scale } };
   }
 
   let provCache = null;

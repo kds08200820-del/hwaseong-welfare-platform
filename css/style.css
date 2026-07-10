@@ -5,22 +5,22 @@
    ============================================================= */
 
 :root {
-  /* Surfaces & ink — 따뜻한 크림/차콜 (에디토리얼) */
-  --page:            #f4f1ea;
-  --surface-1:       #fbf9f4;
-  --surface-2:       #efeade;
-  --text-primary:    #201c15;
-  --text-secondary:  #5c554a;
-  --text-muted:      #8f8779;
-  --border:          rgba(32, 28, 21, 0.12);
-  --grid:            #e5dfd2;
+  /* Surfaces & ink — 삼성 스타일 클린 화이트 */
+  --page:            #ffffff;
+  --surface-1:       #ffffff;
+  --surface-2:       #f4f5f7;
+  --text-primary:    #141414;
+  --text-secondary:  #535457;
+  --text-muted:      #8b8d91;
+  --border:          rgba(0, 0, 0, 0.10);
+  --grid:            #e6e7e9;
 
-  /* Brand — 브론즈/골드 (우아·따뜻) */
-  --brand:           #a8794f;
-  --brand-strong:    #8a6038;
-  --brand-soft:      #e6d8c2;
-  --brand-wash:      #f1e9db;
-  --accent:          #c08a52;
+  /* Brand — 삼성 블루 */
+  --brand:           #1428a0;
+  --brand-strong:    #0d1c7a;
+  --brand-soft:      #cdd6f5;
+  --brand-wash:      #eef1fb;
+  --accent:          #2189ff;
 
   /* 데이터 시각화 카테고리 (고정 순서 — 순환 금지) */
   --series-1: #2a78d6;  /* blue */
@@ -47,38 +47,38 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --page:           #14110d;
-    --surface-1:      #201c16;
-    --surface-2:      #1a1712;
-    --text-primary:   #f6f2ea;
-    --text-secondary: #c9bfae;
-    --text-muted:     #928a7b;
-    --border:         rgba(246, 242, 234, 0.12);
-    --grid:           #332e26;
-    --brand:          #c9a06d;
-    --brand-strong:   #a8794f;
-    --brand-soft:     #4a3b28;
-    --brand-wash:     #241d14;
+    --page:           #000000;
+    --surface-1:      #141414;
+    --surface-2:      #1c1c1e;
+    --text-primary:   #ffffff;
+    --text-secondary: #c9cace;
+    --text-muted:     #8b8d91;
+    --border:         rgba(255, 255, 255, 0.12);
+    --grid:           #2a2a2c;
+    --brand:          #4d7cff;
+    --brand-strong:   #2189ff;
+    --brand-soft:     #1c2a63;
+    --brand-wash:     #10162e;
     --series-1: #3987e5; --series-2: #199e70; --series-3: #c98500;
     --series-4: #008300; --series-5: #9085e9; --series-6: #e66767;
     --series-7: #d55181; --series-8: #d95926;
-    --shadow: 0 1px 2px rgba(0,0,0,.35), 0 8px 28px rgba(0,0,0,.5);
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 28px rgba(0,0,0,.55);
   }
 }
 
 /* Manual theme override via [data-theme] */
 :root[data-theme="dark"] {
-  --page:#14110d;--surface-1:#201c16;--surface-2:#1a1712;--text-primary:#f6f2ea;
-  --text-secondary:#c9bfae;--text-muted:#928a7b;--border:rgba(246,242,234,.12);
-  --grid:#332e26;--brand:#c9a06d;--brand-strong:#a8794f;--brand-soft:#4a3b28;
-  --brand-wash:#241d14;--series-1:#3987e5;--series-2:#199e70;--series-3:#c98500;
+  --page:#000000;--surface-1:#141414;--surface-2:#1c1c1e;--text-primary:#ffffff;
+  --text-secondary:#c9cace;--text-muted:#8b8d91;--border:rgba(255,255,255,.12);
+  --grid:#2a2a2c;--brand:#4d7cff;--brand-strong:#2189ff;--brand-soft:#1c2a63;
+  --brand-wash:#10162e;--series-1:#3987e5;--series-2:#199e70;--series-3:#c98500;
   --series-4:#008300;--series-5:#9085e9;--series-6:#e66767;--series-7:#d55181;--series-8:#d95926;
 }
 :root[data-theme="light"] {
-  --page:#f4f1ea;--surface-1:#fbf9f4;--surface-2:#efeade;--text-primary:#201c15;
-  --text-secondary:#5c554a;--text-muted:#8f8779;--border:rgba(32,28,21,.12);
-  --grid:#e5dfd2;--brand:#a8794f;--brand-strong:#8a6038;--brand-soft:#e6d8c2;
-  --brand-wash:#f1e9db;--accent:#c08a52;--series-1:#2a78d6;--series-2:#1baf7a;--series-3:#eda100;
+  --page:#ffffff;--surface-1:#ffffff;--surface-2:#f4f5f7;--text-primary:#141414;
+  --text-secondary:#535457;--text-muted:#8b8d91;--border:rgba(0,0,0,.10);
+  --grid:#e6e7e9;--brand:#1428a0;--brand-strong:#0d1c7a;--brand-soft:#cdd6f5;
+  --brand-wash:#eef1fb;--accent:#2189ff;--series-1:#2a78d6;--series-2:#1baf7a;--series-3:#eda100;
   --series-4:#008300;--series-5:#4a3aa7;--series-6:#e34948;--series-7:#e87ba4;--series-8:#eb6834;
 }
 
@@ -158,7 +158,58 @@ h1 { font-weight: 600; }
 .btn-ghost { background: var(--surface-1); color: var(--text-primary); border-color: var(--border); }
 .btn-ghost:hover { background: var(--brand-wash); }
 
-/* ---------- Hero ---------- */
+/* ---------- 시네마틱 히어로 (지도 줌인) ---------- */
+.hero-cine {
+  position: relative; overflow: hidden;
+  min-height: 88vh; background: #000;
+  display: flex; align-items: center;
+}
+.hero-map { position: absolute; inset: 0; z-index: 1; }
+.hero-map svg { width: 100%; height: 100%; display: block; }
+.hero-map .hprov { fill: #1f2024; stroke: #000; stroke-width: 0.8; transition: fill .6s ease; }
+.hero-map .hprov.hi { fill: #26407e; }
+.hero-map .hmarker-ring { fill: none; stroke: var(--accent); }
+.hero-map .hmarker-dot { fill: var(--accent); }
+.hero-cine::after {
+  content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background:
+    radial-gradient(120% 90% at 70% 40%, transparent 30%, rgba(0,0,0,.55) 100%),
+    linear-gradient(90deg, rgba(0,0,0,.92) 0%, rgba(0,0,0,.6) 40%, rgba(0,0,0,.12) 100%);
+}
+.hero-cine .wrap { position: relative; z-index: 3; width: 100%; }
+.hero-copy { max-width: 620px; }
+.hero-copy .eyebrow { color: var(--accent); opacity: 0; transform: translateY(10px); }
+.hero-copy h1 { color: #f6f2ea; font-size: clamp(2.2rem, 5.4vw, 4rem); font-weight: 600; line-height: 1.12; margin: 0 0 18px; }
+.hero-copy h1 .hl { color: var(--accent); }
+.hero-copy .lede { color: rgba(246,242,234,.82); font-size: 1.18rem; margin: 0 0 28px; }
+.hero-copy .hero-cta .btn-ghost { background: transparent; color: #f6f2ea; border: 1px solid rgba(246,242,234,.4); }
+.hero-copy .hero-cta .btn-ghost:hover { background: rgba(246,242,234,.1); }
+/* 스테이지 텍스트 애니메이션 */
+.hero-stage { opacity: 0; transform: translateY(14px); transition: opacity .8s ease, transform .8s ease; }
+.hero-stage.show { opacity: 1; transform: none; }
+.hero-scene-label {
+  position: absolute; z-index: 3; right: 6vw; bottom: 12vh; text-align: right;
+  color: rgba(246,242,234,.9); opacity: 0; transition: opacity .7s ease;
+}
+.hero-scene-label.show { opacity: 1; }
+.hero-scene-label .big { font-size: clamp(1.3rem, 3vw, 2rem); font-weight: 700; color: var(--accent); }
+.hero-scene-label .sm { font-size: .9rem; color: rgba(246,242,234,.7); }
+.hero-replay {
+  position: absolute; z-index: 4; right: 20px; bottom: 20px;
+  background: rgba(246,242,234,.12); color: #f6f2ea; border: 1px solid rgba(246,242,234,.25);
+  border-radius: 999px; padding: 8px 16px; font-size: .85rem; font-weight: 600; cursor: pointer;
+  backdrop-filter: blur(4px);
+}
+.hero-replay:hover { background: rgba(246,242,234,.2); }
+@keyframes hpulse { 0% { r: 4; opacity: .9; } 100% { r: 40; opacity: 0; } }
+
+@media (max-width: 700px) {
+  .hero-cine { min-height: 80vh; }
+  .hero-scene-label { bottom: 8vh; right: 5vw; }
+  .hero-cine::after { background: linear-gradient(180deg, rgba(20,17,13,.5), rgba(20,17,13,.85)); }
+}
+
+/* ---------- Hero (구버전) ---------- */
 .hero {
   position: relative; overflow: hidden;
   background:
@@ -359,21 +410,20 @@ table.data td.num, table.data th.num { text-align: right; }
 /* ---------- CTA band — 깊은 에스프레소 + 얇은 브론즈 악센트 ---------- */
 .cta-band {
   position: relative; overflow: hidden;
-  background:
-    radial-gradient(120% 160% at 0% 0%, #38322b 0%, #221e19 45%, #17130f 100%);
-  color: #f3eee5; border-radius: 20px; padding: 56px 48px; text-align: center;
-  border: 1px solid rgba(201, 160, 109, 0.28);
+  background: radial-gradient(120% 160% at 20% 0%, #1a2450 0%, #101728 50%, #0a0d18 100%);
+  color: #f2f4f8; border-radius: 20px; padding: 56px 48px; text-align: center;
+  border: 1px solid rgba(33, 137, 255, 0.25);
 }
 .cta-band::before {
   content: ""; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
   width: 64px; height: 3px; background: var(--accent); border-radius: 0 0 3px 3px;
 }
 .cta-band h2 { color: #fff; letter-spacing: -0.01em; }
-.cta-band p { color: rgba(243,238,229,.72); max-width: 58ch; margin: 0 auto 26px; }
+.cta-band p { color: rgba(242,244,248,.74); max-width: 58ch; margin: 0 auto 26px; }
 .cta-band .btn-ghost {
-  background: transparent; color: #f3eee5; border: 1px solid rgba(243,238,229,.38);
+  background: transparent; color: #f2f4f8; border: 1px solid rgba(242,244,248,.4);
 }
-.cta-band .btn-ghost:hover { background: rgba(243,238,229,.10); border-color: rgba(243,238,229,.7); }
+.cta-band .btn-ghost:hover { background: rgba(242,244,248,.12); border-color: rgba(242,244,248,.72); }
 
 /* ---------- Footer ---------- */
 .site-footer { background: var(--surface-1); border-top: 1px solid var(--border); padding: 48px 0 32px; margin-top: 40px; }

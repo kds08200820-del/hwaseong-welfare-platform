@@ -29,27 +29,28 @@
   </div>
 </header>
 
-<!-- HERO -->
-<section class="hero">
-  <div class="wrap hero-inner">
-    <span class="eyebrow">사회적협동조합 · 지역복지 통합 플랫폼</span>
-    <h1>흩어진 복지 정보를<br><span class="hl">한 곳에서</span> 잇습니다</h1>
-    <p class="lede">
-      경기도 화성시 우정읍·장안면의 소외된 이웃을 위해 —
-      곳곳에 흩어진 복지 정보·자원·데이터를 한 데 모아
-      <b>필요한 사람에게, 필요한 지원을, 정확하게</b> 연결합니다.
-      지역에서 시작해 전국 단위 복지 플랫폼으로 나아갑니다.
-    </p>
-    <div class="hero-cta">
-      <a class="btn btn-primary" href="dashboard.html">📊 지역 데이터 대시보드 보기</a>
-      <a class="btn btn-ghost" href="services.html">복지 서비스 둘러보기</a>
-    </div>
-    <div class="hero-badges">
-      <span class="pill"><span class="dot"></span> 화성특례시 만세구 우정읍·장안면</span>
-      <span class="pill">📍 인구 25,815명 통합 관리</span>
-      <span class="pill">🔗 공공데이터포털 연계</span>
+<!-- 시네마틱 히어로: 전국 지도 → 화성 우정·장안 클로즈업 -->
+<section class="hero-cine" id="heroCine">
+  <div class="hero-map"><svg id="heroSvg" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg></div>
+  <div class="hero-scene-label" id="heroSceneLabel">
+    <div class="big" id="sceneBig">전국</div>
+    <div class="sm" id="sceneSm">17개 시도 복지 데이터</div>
+  </div>
+  <div class="wrap">
+    <div class="hero-copy">
+      <span class="eyebrow hero-stage" id="hs0">사회적협동조합 · 지역복지 통합 플랫폼</span>
+      <h1 class="hero-stage" id="hs1">필요한 곳으로,<br><span class="hl">화성 우정·장안</span>까지</h1>
+      <p class="lede hero-stage" id="hs2">
+        전국의 흩어진 복지 데이터를 한 곳에 모아,
+        가장 도움이 필요한 이웃에게 <b>정확하게</b> 연결합니다.
+      </p>
+      <div class="hero-cta hero-stage" id="hs3">
+        <a class="btn btn-primary" href="dashboard.html">지역 데이터 대시보드</a>
+        <a class="btn btn-ghost" href="map.html">전국 복지 지도</a>
+      </div>
     </div>
   </div>
+  <button class="hero-replay" id="heroReplay">↻ 다시 보기</button>
 </section>
 
 <!-- 핵심 지표 -->
@@ -209,6 +210,9 @@
   </div>
 </footer>
 
+<script src="js/kr-topo.js"></script>
+<script src="js/kr-map.js"></script>
+<script src="js/hero-map.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>
