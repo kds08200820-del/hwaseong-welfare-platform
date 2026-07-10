@@ -8,6 +8,23 @@
   let selected = null;        // sido code
   let sortKey = null, sortDir = -1;
   let compChart = null;
+  let drill = null;          // 드릴다운한 시도 short (null=전국)
+  let sggSel = null;         // 선택 시군구 code
+
+  // 시군구 데이터 (code → {seniorLeisure, disabled, seniorAlone})
+  const SGG = {}, SGG_BY_NAME = {};
+  if (typeof window.SIGUNGU_DATA !== "undefined") window.SIGUNGU_DATA.forEach(d => { SGG[d.code] = d; SGG_BY_NAME[d.name] = d; });
+  // code 우선, 없으면 통합시 구(예: 수원시장안구)→시(수원시) 폴백
+  function sggData(p) {
+    if (SGG[p.code]) return SGG[p.code];
+    const m = p.name && p.name.match(/^(.+?시).*구$/);
+    if (m && SGG_BY_NAME[m[1]]) return SGG_BY_NAME[m[1]];
+    return null;
+  }
+  const SGG_METRICS = ["seniorLeisure", "disabled", "seniorAlone"];
+  const SGG_LABEL = { seniorLeisure: "노인여가시설", disabled: "등록장애인", seniorAlone: "독거노인" };
+  function sggMetric() { return SGG_METRICS.includes(metricKey) ? metricKey : "seniorAlone"; }
+  function canDrill(short) { return typeof KRGeo !== "undefined" && KRGeo.buildSigungu && KRGeo.buildSigungu(short); }
 
   const fmt = (n) => (typeof n === "number" ? n.toLocaleString("ko-KR") : n);
   const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
@@ -20,8 +37,8 @@
   }
 
   /* 색상 구간 — 값 → 램프 인덱스 (7단계 분위) */
-  function colorScale() {
-    const vals = N.sido.map(val).sort((a, b) => a - b);
+  function colorScale(values) {
+    const vals = (values || N.sido.map(val)).slice().sort((a, b) => a - b);
     const min = vals[0], max = vals[vals.length - 1];
     return {
       min, max,
@@ -67,6 +84,7 @@
   }
 
   function renderMap() {
+    if (drill) return renderSigunguMap();
     const wrap = document.getElementById("kmap");
     const m = N.metric(metricKey);
     const sc = colorScale();
@@ -100,11 +118,43 @@
       `${m.label} 분포 <span class="badge ${m.tag === "official" ? "good" : "warning"}" style="font-size:.62rem;">${m.tag === "official" ? "공식" : "추정"}</span>`;
     document.getElementById("mapHint").textContent = `${m.year} · 단위 ${unitLabel()}`;
     document.getElementById("mapNote").textContent =
-      `${m.sub} — ${usePer() ? "인구 10만명당으로 정규화(지역 규모 보정). " : "시도별 절대 수치. "}지도 위에 마우스를 올리면 상세가 표시됩니다.`;
+      `${m.sub} — ${usePer() ? "인구 10만명당으로 정규화(지역 규모 보정). " : "시도별 절대 수치. "}마우스 호버 시 상세, 시도를 클릭하면 시군구 지도로 확대됩니다.`;
 
     document.getElementById("legBar").innerHTML = N.ramp.map(c => `<span style="background:${c}"></span>`).join("");
     document.getElementById("legLow").textContent = m.key === "elderlyRate" ? sc.min + "%" : fmt(usePer() ? sc.min : Math.round(sc.min));
     document.getElementById("legHigh").textContent = m.key === "elderlyRate" ? sc.max + "%" : fmt(usePer() ? sc.max : Math.round(sc.max));
+  }
+
+  /* ---------- 시군구 드릴다운 지도 ---------- */
+  function renderSigunguMap() {
+    const wrap = document.getElementById("kmap");
+    const geo = KRGeo.buildSigungu(drill);
+    const sido = shortToSido[drill];
+    const mk = sggMetric();
+    const feats = geo.provinces.map(p => { const d = sggData(p); return { p, d, v: d ? d[mk] : null }; });
+    const vals = feats.filter(f => f.v != null).map(f => f.v);
+    const sc = colorScale(vals.length ? vals : [0, 1]);
+    const noData = "var(--surface-2)";
+    const paths = feats.map(f => {
+      const sel = f.p.code === sggSel ? " selected" : "";
+      const fill = f.v != null ? sc.color(f.v) : noData;
+      return `<path class="province${sel}" d="${f.p.d}" fill="${fill}" data-code="${f.p.code}"></path>`;
+    }).join("");
+    const labels = feats.map(f => {
+      const nm = f.p.name.replace(/(특별자치시|특별자치도)/, "");
+      return `<text class="map-label" style="font-size:11px;pointer-events:none" x="${f.p.cx.toFixed(0)}" y="${f.p.cy.toFixed(0)}"
+        text-anchor="middle" fill="${f.v != null && sc.isDark(f.v) ? "#fff" : "#0b0b0b"}" stroke="rgba(255,255,255,.55)" stroke-width="2">${nm}</text>`;
+    }).join("");
+    wrap.innerHTML = `<svg viewBox="${geo.viewBox}" role="img" aria-label="${sido.name} 시군구 ${SGG_LABEL[mk]} 지도"><g>${paths}</g><g>${labels}</g></svg>`;
+
+    document.getElementById("mapTitle").innerHTML =
+      `<button class="btn-back" id="btnBack">← 전국</button> ${sido.name} · ${SGG_LABEL[mk]} <span class="badge good" style="font-size:.62rem;">공식</span>`;
+    document.getElementById("mapHint").textContent = `2024~2025 · 시군구 단위 · 단위 ${N.metric(mk).unit}`;
+    document.getElementById("mapNote").textContent =
+      `${sido.name}의 시군구별 ${SGG_LABEL[mk]} 분포입니다. 마우스를 올리면 상세, 회색은 데이터 미제공(통합시 구 등).`;
+    document.getElementById("legBar").innerHTML = N.ramp.map(c => `<span style="background:${c}"></span>`).join("");
+    document.getElementById("legLow").textContent = fmt(Math.round(sc.min));
+    document.getElementById("legHigh").textContent = fmt(Math.round(sc.max));
   }
 
   /* 지도 툴팁 */
@@ -125,9 +175,26 @@
   }
   function hideTip() { document.getElementById("mapTip").hidden = true; }
 
+  function showSggTip(code, evt) {
+    const tip = document.getElementById("mapTip");
+    const geo = KRGeo.buildSigungu(drill);
+    const p = geo.provinces.find(x => x.code === code) || { code, name: code };
+    const d = sggData(p); const nm = p.name;
+    tip.innerHTML = `<div class="tt-name">${nm}</div>` + (d ?
+      `<div class="tt-row"><span class="tk">노인여가시설</span><span class="tv">${fmt(d.seniorLeisure ?? 0)}개소</span></div>
+       <div class="tt-row"><span class="tk">등록장애인</span><span class="tv">${fmt(d.disabled ?? 0)}명</span></div>
+       <div class="tt-row"><span class="tk">독거노인</span><span class="tv tt-hi">${fmt(d.seniorAlone ?? 0)}가구</span></div>`
+      : `<div class="tt-row"><span class="tk">데이터 미제공</span></div>`);
+    const wrap = document.getElementById("kmap").getBoundingClientRect();
+    tip.style.left = (evt.clientX - wrap.left) + "px";
+    tip.style.top = (evt.clientY - wrap.top) + "px";
+    tip.hidden = false;
+  }
+
   /* ---------- 순위 ---------- */
   function renderRank() {
     const el = document.getElementById("rankList");
+    if (drill) return renderSggRank();
     const m = N.metric(metricKey);
     const sc = colorScale();
     const rows = [...N.sido].sort((a, b) => val(b) - val(a));
@@ -146,8 +213,28 @@
     }).join("");
   }
 
+  function renderSggRank() {
+    const el = document.getElementById("rankList");
+    const mk = sggMetric();
+    const geo = KRGeo.buildSigungu(drill);
+    const seen = {}, rows = [];
+    geo.provinces.forEach(p => { const d = sggData(p); if (!d || seen[d.name]) return; seen[d.name] = 1; rows.push({ code: p.code, name: d.name, v: d[mk] }); });
+    rows.sort((a, b) => b.v - a.v);
+    const max = rows.length ? rows[0].v : 1, min = rows.length ? rows[rows.length - 1].v : 0;
+    const sc = colorScale(rows.map(r => r.v));
+    document.getElementById("rankHint").textContent = `${shortToSido[drill].name} · ${SGG_LABEL[mk]}`;
+    el.innerHTML = rows.map((r, i) => {
+      const pct = max === min ? 100 : (r.v - min) / (max - min) * 92 + 8;
+      return `<div class="rank-row${r.code === sggSel ? " selected" : ""}" data-sgg="${r.code}">
+        <span class="rk">${i + 1}</span><span class="nm" style="font-size:.82rem;">${r.name}</span>
+        <span class="rank-bar-track"><span class="rank-bar-fill" style="width:${pct}%;background:${sc.color(r.v)};"></span></span>
+        <span class="rv">${fmt(r.v)}</span></div>`;
+    }).join("");
+  }
+
   /* ---------- 상세 ---------- */
   function renderDetail() {
+    if (drill) return renderSggDetail();
     const el = document.getElementById("regionDetail");
     const s = N.sido.find(x => x.code === selected) || N.sido[0];
     document.getElementById("detailTitle").textContent = s.name;
@@ -161,6 +248,20 @@
       <div class="rd-metric"><span class="k">기초생활수급자 (2024)</span><span class="v">${fmt(s.basicLivelihood)}명 <span style="color:var(--text-muted);font-weight:500;">(수급률 ${(s.basicLivelihood/s.population*100).toFixed(1)}%)</span></span></div>
       <div class="rd-metric"><span class="k">독거노인 (65세+ 1인가구, 2024)</span><span class="v">${fmt(s.seniorAlone)}가구</span></div>
       <div class="rd-metric"><span class="k">푸드뱅크·마켓 (추정)</span><span class="v">${fmt(s.foodbank)}개소</span></div>`;
+  }
+
+  function renderSggDetail() {
+    const el = document.getElementById("regionDetail");
+    const geo = KRGeo.buildSigungu(drill);
+    const p = geo.provinces.find(x => x.code === sggSel) || geo.provinces[0];
+    const d = sggData(p);
+    document.getElementById("detailTitle").textContent = `${shortToSido[drill].name} ${p.name}`;
+    el.innerHTML = (d ? `
+      <div class="rd-metric"><span class="k">노인여가복지시설 (2024)</span><span class="v">${fmt(d.seniorLeisure ?? 0)}개소</span></div>
+      <div class="rd-metric"><span class="k">등록장애인 (2025)</span><span class="v">${fmt(d.disabled ?? 0)}명</span></div>
+      <div class="rd-metric"><span class="k">독거노인 (65세+ 1인가구, 2024)</span><span class="v">${fmt(d.seniorAlone ?? 0)}가구</span></div>`
+      : `<div class="rd-metric"><span class="k">시군구 단위 데이터 미제공</span></div>`)
+      + (p.name.includes("화성") ? `<div class="rd-metric" style="border:none;"><a class="btn btn-primary" href="dashboard.html#gu" style="width:100%;justify-content:center;">화성시 4개 구 상세 비교 →</a></div>` : "");
   }
 
   /* ---------- 시설 구성 비교 차트 ---------- */
@@ -245,11 +346,26 @@
     renderDynamic();
   });
   function pick(code) { selected = code; renderMap(); renderRank(); renderDetail(); }
+  function drillIn(short) { if (!canDrill(short)) return; drill = short; sggSel = null; hideTip(); renderMap(); renderRank(); renderDetail(); }
+  function drillOut() { drill = null; sggSel = null; hideTip(); renderMap(); renderRank(); renderDetail(); }
+  function pickSgg(code) { sggSel = code; renderMap(); renderRank(); renderDetail(); }
+
   const kmap = document.getElementById("kmap");
-  kmap.addEventListener("click", (e) => { const t = e.target.closest(".province"); if (t) pick(shortToSido[t.dataset.short].code); });
-  kmap.addEventListener("mousemove", (e) => { const t = e.target.closest(".province"); if (t) showTip(t.dataset.short, e); else hideTip(); });
+  kmap.addEventListener("click", (e) => {
+    if (drill) { const t = e.target.closest(".province"); if (t) pickSgg(t.dataset.code); return; }
+    const t = e.target.closest(".province"); if (t) drillIn(t.dataset.short);
+  });
+  kmap.addEventListener("mousemove", (e) => {
+    const t = e.target.closest(".province"); if (!t) { hideTip(); return; }
+    if (drill) showSggTip(t.dataset.code, e); else showTip(t.dataset.short, e);
+  });
   kmap.addEventListener("mouseleave", hideTip);
-  document.getElementById("rankList").addEventListener("click", (e) => { const r = e.target.closest(".rank-row"); if (r) pick(r.dataset.code); });
+  // 뒤로가기 버튼 (동적 생성되므로 위임)
+  document.getElementById("mapTitle").addEventListener("click", (e) => { if (e.target.closest("#btnBack")) drillOut(); });
+  document.getElementById("rankList").addEventListener("click", (e) => {
+    const r = e.target.closest(".rank-row"); if (!r) return;
+    if (drill) { if (r.dataset.sgg) pickSgg(r.dataset.sgg); } else if (r.dataset.code) pick(r.dataset.code);
+  });
   document.querySelector("#natTable tbody").addEventListener("click", (e) => { const r = e.target.closest("tr"); if (r) pick(r.dataset.code); });
   document.getElementById("natTableHead").addEventListener("click", (e) => {
     const th = e.target.closest("th"); if (!th) return;

@@ -264,6 +264,8 @@ p { margin: 0 0 1em; }
   font-size: .85rem; transform: translate(-50%, calc(-100% - 14px)); transition: opacity .08s;
 }
 .map-tip[hidden] { display: none; }
+.btn-back { background: var(--brand); color: #fff; border: none; border-radius: 8px; padding: 3px 10px; font-size: .8rem; font-weight: 700; cursor: pointer; margin-right: 6px; font-family: var(--font); }
+.btn-back:hover { background: var(--brand-strong); }
 .map-tip .tt-name { font-weight: 800; font-size: .95rem; margin-bottom: 6px; }
 .map-tip .tt-row { display: flex; justify-content: space-between; gap: 16px; line-height: 1.5; }
 .map-tip .tt-row .tk { opacity: .75; }
