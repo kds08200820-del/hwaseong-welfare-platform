@@ -293,6 +293,7 @@ h1 { font-weight: 600; }
   font-weight: 600; font-size: .9rem; color: var(--text-secondary); font-family: var(--font);
 }
 .seg button.active { background: var(--brand); color: #fff; }
+.seg button:disabled { opacity: .38; cursor: not-allowed; }
 
 /* legend */
 .legend { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 12px; }
@@ -369,8 +370,8 @@ h1 { font-weight: 600; }
 .rank-row:hover, .rank-row.selected { background: var(--brand-wash); }
 .rank-row .rk { font-size: .78rem; color: var(--text-muted); font-weight: 700; text-align: center; }
 .rank-row .nm { font-weight: 700; font-size: .9rem; }
-.rank-bar-track { height: 9px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
-.rank-bar-fill { height: 100%; border-radius: 999px; }
+.rank-bar-track { height: 9px; border-radius: 999px; background: color-mix(in srgb, var(--text-muted) 22%, transparent); overflow: hidden; }
+.rank-bar-fill { height: 100%; border-radius: 999px; transition: width .3s ease; }
 .rank-row .rv { font-weight: 700; font-size: .86rem; font-variant-numeric: tabular-nums; min-width: 62px; text-align: right; }
 
 .region-detail { display: grid; gap: 10px; }

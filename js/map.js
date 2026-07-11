@@ -71,8 +71,13 @@
   /* ---------- 컨트롤 ---------- */
   function renderMetricSeg() {
     const seg = document.getElementById("metricSeg");
-    seg.innerHTML = N.metrics.map(m =>
-      `<button data-metric="${m.key}" class="${m.key === metricKey ? "active" : ""}">${m.short}</button>`).join("");
+    const shown = drill ? sggMetric() : metricKey;   // 드릴 중엔 실제 표시 지표를 active로
+    seg.innerHTML = N.metrics.map(m => {
+      const dis = drill && !SGG_METRICS.includes(m.key);   // 시군구 미제공 지표는 비활성
+      return `<button data-metric="${m.key}" class="${m.key === shown ? "active" : ""}"${dis ? ' disabled title="시군구 단위 미제공"' : ""}>${m.short}</button>`;
+    }).join("");
+    // 정규화 토글: 드릴 중엔 비활성(시군구 인구 미보유)
+    document.querySelectorAll("#normSeg button").forEach(b => b.disabled = drill || !N.metric(metricKey).normalizable);
   }
 
   /* ---------- 실제 지도(SVG 추로플레스) ---------- */
@@ -216,7 +221,7 @@
       return `<div class="rank-row${sel}" data-code="${s.code}">
         <span class="rk">${i + 1}</span>
         <span class="nm">${s.short}</span>
-        <span class="rank-bar-track"><span class="rank-bar-fill" style="width:${pct}%;background:${sc.color(v)};"></span></span>
+        <span class="rank-bar-track"><span class="rank-bar-fill" style="width:${Math.max(pct, 6)}%;background:${sc.ramp[4]};"></span></span>
         <span class="rv">${disp}</span>
       </div>`;
     }).join("");
@@ -236,7 +241,7 @@
       const pct = max === min ? 100 : (r.v - min) / (max - min) * 92 + 8;
       return `<div class="rank-row${r.code === sggSel ? " selected" : ""}" data-sgg="${r.code}">
         <span class="rk">${i + 1}</span><span class="nm" style="font-size:.82rem;">${r.name}</span>
-        <span class="rank-bar-track"><span class="rank-bar-fill" style="width:${pct}%;background:${sc.color(r.v)};"></span></span>
+        <span class="rank-bar-track"><span class="rank-bar-fill" style="width:${Math.max(pct, 6)}%;background:${sc.ramp[4]};"></span></span>
         <span class="rv">${fmt(r.v)}</span></div>`;
     }).join("");
   }
@@ -342,10 +347,8 @@
 
   /* ---------- 이벤트 ---------- */
   document.getElementById("metricSeg").addEventListener("click", (e) => {
-    const b = e.target.closest("button"); if (!b) return;
+    const b = e.target.closest("button"); if (!b || b.disabled) return;
     metricKey = b.dataset.metric;
-    const normBtns = document.querySelectorAll("#normSeg button");
-    normBtns.forEach(x => x.disabled = !N.metric(metricKey).normalizable);
     renderMetricSeg(); renderDynamic();
   });
   document.getElementById("normSeg").addEventListener("click", (e) => {
@@ -355,8 +358,8 @@
     renderDynamic();
   });
   function pick(code) { selected = code; renderMap(); renderRank(); renderDetail(); }
-  function drillIn(short) { if (!canDrill(short)) return; drill = short; sggSel = null; hideTip(); renderMap(); renderRank(); renderDetail(); }
-  function drillOut() { drill = null; sggSel = null; hideTip(); renderMap(); renderRank(); renderDetail(); }
+  function drillIn(short) { if (!canDrill(short)) return; drill = short; sggSel = null; hideTip(); renderMetricSeg(); renderMap(); renderRank(); renderDetail(); }
+  function drillOut() { drill = null; sggSel = null; hideTip(); renderMetricSeg(); renderMap(); renderRank(); renderDetail(); }
   function pickSgg(code) { sggSel = code; renderMap(); renderRank(); renderDetail(); }
 
   const kmap = document.getElementById("kmap");
