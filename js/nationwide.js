@@ -20,14 +20,14 @@ const NATIONWIDE_DATA = {
   /* 지도에서 선택 가능한 지표(복지시설 구분 포함)
      tag: official=공식 실통계 / estimate=전국 총계 기반 추정 */
   metrics: [
-    { key: "seniorLeisure", label: "노인여가복지시설", short: "노인여가시설", unit: "개소", sub: "경로당·노인복지관·노인교실", year: "2024", kind: "facility", normalizable: true, tag: "official" },
-    { key: "daycare",       label: "어린이집",        short: "어린이집",     unit: "개소", sub: "영유아 보육시설",            year: "2025", kind: "facility", normalizable: true, tag: "official" },
-    { key: "foodbank",      label: "푸드뱅크·마켓",   short: "푸드뱅크",     unit: "개소", sub: "결식·저소득 먹거리 지원",   year: "2024", kind: "facility", normalizable: true, tag: "estimate" },
-    { key: "disabled",      label: "등록장애인",      short: "등록장애인",   unit: "명",   sub: "복지 대상 인구",            year: "2025", kind: "welfare",  normalizable: true, tag: "official" },
-    { key: "basicLivelihood", label: "기초생활수급자", short: "기초수급",   unit: "명",   sub: "국민기초생활보장",          year: "2024", kind: "welfare",  normalizable: true, tag: "official" },
-    { key: "seniorAlone",   label: "독거노인",        short: "독거노인",     unit: "가구", sub: "65세 이상 1인가구",         year: "2024", kind: "welfare",  normalizable: true, tag: "official" },
     { key: "population",    label: "총인구",          short: "총인구",       unit: "명",   sub: "주민등록 인구",             year: "2025", kind: "demo",     normalizable: false, tag: "official" },
     { key: "elderlyRate",   label: "고령화율(65세+)", short: "고령화율",     unit: "%",    sub: "65세 이상 비율",            year: "2024", kind: "demo",     normalizable: false, tag: "official" },
+    { key: "seniorAlone",   label: "독거노인",        short: "독거노인",     unit: "가구", sub: "65세 이상 1인가구",         year: "2024", kind: "welfare",  normalizable: true, tag: "official" },
+    { key: "basicLivelihood", label: "기초생활수급자", short: "기초수급",   unit: "명",   sub: "국민기초생활보장",          year: "2024", kind: "welfare",  normalizable: true, tag: "official" },
+    { key: "disabled",      label: "등록장애인",      short: "등록장애인",   unit: "명",   sub: "복지 대상 인구",            year: "2025", kind: "welfare",  normalizable: true, tag: "official" },
+    { key: "foodbank",      label: "푸드뱅크·마켓",   short: "푸드뱅크",     unit: "개소", sub: "결식·저소득 먹거리 지원",   year: "2024", kind: "facility", normalizable: true, tag: "estimate" },
+    { key: "daycare",       label: "어린이집",        short: "어린이집",     unit: "개소", sub: "영유아 보육시설",            year: "2025", kind: "facility", normalizable: true, tag: "official" },
+    { key: "seniorLeisure", label: "노인여가복지시설", short: "노인여가시설", unit: "개소", sub: "경로당·노인복지관·노인교실", year: "2024", kind: "facility", normalizable: true, tag: "official" },
   ],
 
   /* 17개 시도 — 노인여가시설·어린이집·등록장애인은 KOSIS 실측(2024~2025),

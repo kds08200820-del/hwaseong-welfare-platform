@@ -318,7 +318,16 @@ h1 { font-weight: 600; }
 .badge.good     { background: color-mix(in srgb, var(--status-good) 15%, transparent); color: var(--status-good); }
 
 /* ---------- 전국 실제 지도(추로플레스) ---------- */
-.kmap-wrap { position: relative; width: 100%; max-width: 620px; margin: 0 auto; }
+.kmap-wrap { position: relative; width: 100%; max-width: 100%; margin: 0 auto; }
+/* 전국 지도 레이아웃: 왼쪽(지도 크게 + 순위) / 오른쪽(상세) */
+.map-layout { display: grid; grid-template-columns: 1.75fr 1fr; gap: 22px; align-items: start; }
+@media (max-width: 860px) { .map-layout { grid-template-columns: 1fr; } }
+.rank-toggle {
+  width: 100%; margin-top: 10px; padding: 9px; border: 1px solid var(--border); border-radius: 9px;
+  background: var(--surface-2); color: var(--brand); font-weight: 700; font-size: .86rem; cursor: pointer;
+  font-family: var(--font);
+}
+.rank-toggle:hover { background: var(--brand-wash); }
 .kmap-wrap svg { width: 100%; height: auto; display: block; overflow: visible; }
 .province {
   stroke: var(--surface-1); stroke-width: 1.4px; cursor: pointer;

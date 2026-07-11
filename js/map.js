@@ -3,8 +3,9 @@
    ============================================================= */
 (function () {
   const N = NATIONWIDE_DATA;
-  let metricKey = "seniorLeisure";
+  let metricKey = "population";
   let norm = "abs";          // abs | per (인구 10만명당)
+  let rankExpanded = false;  // 순위 10위까지 / 전체 토글
   let selected = null;        // sido code
   let sortKey = null, sortDir = -1;
   let compChart = null;
@@ -211,7 +212,8 @@
     if (drill) return renderSggRank();
     const m = N.metric(metricKey);
     const sc = colorScale();
-    const rows = [...N.sido].sort((a, b) => val(b) - val(a));
+    const all = [...N.sido].sort((a, b) => val(b) - val(a));
+    const rows = rankExpanded ? all : all.slice(0, 10);
     document.getElementById("rankHint").textContent = `${m.short} · ${unitLabel()}`;
     el.innerHTML = rows.map((s, i) => {
       const v = val(s);
@@ -224,18 +226,24 @@
         <span class="rank-bar-track"><span class="rank-bar-fill" style="width:${Math.max(pct, 6)}%;background:${sc.ramp[4]};"></span></span>
         <span class="rv">${disp}</span>
       </div>`;
-    }).join("");
+    }).join("") + rankToggleHtml(all.length);
+  }
+
+  function rankToggleHtml(total) {
+    if (total <= 10) return "";
+    return `<button class="rank-toggle" id="rankToggle">${rankExpanded ? "접기 ▲" : `전체 ${total}개 보기 ▼`}</button>`;
   }
 
   function renderSggRank() {
     const el = document.getElementById("rankList");
     const mk = sggMetric();
     const geo = KRGeo.buildSigungu(drill);
-    const seen = {}, rows = [];
-    geo.provinces.forEach(p => { const d = sggData(p); if (!d || seen[d.name]) return; seen[d.name] = 1; rows.push({ code: p.code, name: d.name, v: d[mk] }); });
-    rows.sort((a, b) => b.v - a.v);
-    const max = rows.length ? rows[0].v : 1, min = rows.length ? rows[rows.length - 1].v : 0;
-    const sc = colorScale(rows.map(r => r.v));
+    const seen = {}, allRows = [];
+    geo.provinces.forEach(p => { const d = sggData(p); if (!d || seen[d.name]) return; seen[d.name] = 1; allRows.push({ code: p.code, name: d.name, v: d[mk] }); });
+    allRows.sort((a, b) => b.v - a.v);
+    const rows = rankExpanded ? allRows : allRows.slice(0, 10);
+    const max = allRows.length ? allRows[0].v : 1, min = allRows.length ? allRows[allRows.length - 1].v : 0;
+    const sc = colorScale(allRows.map(r => r.v));
     document.getElementById("rankHint").textContent = `${shortToSido[drill].name} · ${SGG_LABEL[mk]}`;
     el.innerHTML = rows.map((r, i) => {
       const pct = max === min ? 100 : (r.v - min) / (max - min) * 92 + 8;
@@ -243,7 +251,7 @@
         <span class="rk">${i + 1}</span><span class="nm" style="font-size:.82rem;">${r.name}</span>
         <span class="rank-bar-track"><span class="rank-bar-fill" style="width:${Math.max(pct, 6)}%;background:${sc.ramp[4]};"></span></span>
         <span class="rv">${fmt(r.v)}</span></div>`;
-    }).join("");
+    }).join("") + rankToggleHtml(allRows.length);
   }
 
   /* ---------- 상세 ---------- */
@@ -375,6 +383,7 @@
   // 뒤로가기 버튼 (동적 생성되므로 위임)
   document.getElementById("mapTitle").addEventListener("click", (e) => { if (e.target.closest("#btnBack")) drillOut(); });
   document.getElementById("rankList").addEventListener("click", (e) => {
+    if (e.target.closest("#rankToggle")) { rankExpanded = !rankExpanded; renderRank(); return; }
     const r = e.target.closest(".rank-row"); if (!r) return;
     if (drill) { if (r.dataset.sgg) pickSgg(r.dataset.sgg); } else if (r.dataset.code) pick(r.dataset.code);
   });

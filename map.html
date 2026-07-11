@@ -66,26 +66,25 @@
 </section>
 
 <section class="section-tight">
-  <div class="wrap grid grid-2" style="gap:22px;align-items:start;">
+  <div class="wrap map-layout">
 
-    <!-- 지도 -->
-    <div class="panel" style="position:relative;">
-      <div class="panel-head">
-        <h3 id="mapTitle">노인여가복지시설 분포</h3>
-        <span class="hint" id="mapHint"></span>
-      </div>
-      <div class="kmap-wrap" id="kmap"></div>
-      <div class="map-tip" id="mapTip" hidden></div>
-      <div class="map-legend">
-        <span class="ends" id="legLow">낮음</span>
-        <span class="bar" id="legBar"></span>
-        <span class="ends" id="legHigh">높음</span>
-      </div>
-      <p class="note" id="mapNote"></p>
-    </div>
-
-    <!-- 순위 + 상세 -->
+    <!-- 왼쪽: 지도(크게) + 시도 순위 -->
     <div class="grid" style="gap:22px;">
+      <div class="panel" style="position:relative;">
+        <div class="panel-head">
+          <h3 id="mapTitle">총인구 분포</h3>
+          <span class="hint" id="mapHint"></span>
+        </div>
+        <div class="kmap-wrap" id="kmap"></div>
+        <div class="map-tip" id="mapTip" hidden></div>
+        <div class="map-legend">
+          <span class="ends" id="legLow">낮음</span>
+          <span class="bar" id="legBar"></span>
+          <span class="ends" id="legHigh">높음</span>
+        </div>
+        <p class="note" id="mapNote"></p>
+      </div>
+
       <div class="panel">
         <div class="panel-head">
           <h3>시도 순위</h3>
@@ -93,14 +92,15 @@
         </div>
         <div class="rank-list" id="rankList"></div>
       </div>
+    </div>
 
-      <div class="panel">
-        <div class="panel-head">
-          <h3 id="detailTitle">시도 상세</h3>
-          <span class="hint">타일·순위 클릭</span>
-        </div>
-        <div class="region-detail" id="regionDetail"></div>
+    <!-- 오른쪽: 시도 상세 -->
+    <div class="panel">
+      <div class="panel-head">
+        <h3 id="detailTitle">시도 상세</h3>
+        <span class="hint">타일·순위 클릭</span>
       </div>
+      <div class="region-detail" id="regionDetail"></div>
     </div>
   </div>
 </section>
