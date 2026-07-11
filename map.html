@@ -104,6 +104,28 @@
   </div>
 </section>
 
+<!-- 우정읍·장안면 실제 복지시설 카카오맵 -->
+<section class="section-tight">
+  <div class="wrap">
+    <div class="panel">
+      <div class="panel-head">
+        <h3>우정읍·장안면 복지시설 지도 <span class="badge good" style="font-size:.62rem;">실제 위치</span></h3>
+        <span class="hint">카카오맵 · 실증지역</span>
+      </div>
+      <p class="note" style="margin:0 0 12px;">실증지역(우정읍·장안면)의 <b>실제 복지시설 위치</b>입니다. 유형을 눌러 필터링하고, 마커·목록을 클릭하면 카카오맵 상세로 연결됩니다.</p>
+      <div class="fac-legend" id="facLegend"></div>
+      <div class="fac-layout">
+        <div class="fac-map" id="facMap"></div>
+        <div class="fac-list" id="facList"></div>
+      </div>
+      <div class="data-note" id="facNotice" hidden style="margin-top:12px;">
+        <span>🔑</span>
+        <span><b>카카오맵 표시</b> — <a href="https://developers.kakao.com" target="_blank" rel="noopener">카카오 developers</a>에서 <b>JavaScript 앱키</b>를 발급받아 <code>js/facilities.js</code>의 <code>KAKAO_APPKEY</code>에 입력하고, 사이트 도메인을 등록하면 지도에 마커가 표시됩니다. 현재는 실제 시설 목록으로 제공됩니다.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- 시설 구성 비교 차트 -->
 <section class="section-tight">
   <div class="wrap">
@@ -153,6 +175,8 @@
 <script src="js/sigungu-data.js"></script>
 <script src="js/kr-map.js"></script>
 <script src="js/map.js"></script>
+<script src="js/facilities.js"></script>
+<script src="js/facility-map.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>
