@@ -255,11 +255,21 @@
   }
 
   /* ---------- 상세 ---------- */
+  function nationalRegion() {
+    return {
+      name: "전국", population: N.national("population"), elderlyRate: N.national("elderlyRate"),
+      seniorLeisure: N.national("seniorLeisure"), daycare: N.national("daycare"),
+      disabled: N.national("disabled"), basicLivelihood: N.national("basicLivelihood"),
+      seniorAlone: N.national("seniorAlone"), foodbank: N.national("foodbank"),
+    };
+  }
   function renderDetail() {
     if (drill) return renderSggDetail();
     const el = document.getElementById("regionDetail");
-    const s = N.sido.find(x => x.code === selected) || N.sido[0];
-    document.getElementById("detailTitle").textContent = s.name;
+    const s = selected ? N.sido.find(x => x.code === selected) : nationalRegion();
+    document.getElementById("detailTitle").innerHTML = selected
+      ? `<button class="btn-back" id="btnNat">← 전국</button> ${s.name}`
+      : "전국 <span class=\"badge good\" style=\"font-size:.62rem;\">합계</span>";
     const per = (k) => (s[k] / s.population * 100000).toFixed(1);
     el.innerHTML = `
       <div class="rd-metric"><span class="k">총인구 (2025)</span><span class="v">${fmt(s.population)}명</span></div>
@@ -382,6 +392,7 @@
   kmap.addEventListener("mouseleave", hideTip);
   // 뒤로가기 버튼 (동적 생성되므로 위임)
   document.getElementById("mapTitle").addEventListener("click", (e) => { if (e.target.closest("#btnBack")) drillOut(); });
+  document.getElementById("detailTitle").addEventListener("click", (e) => { if (e.target.closest("#btnNat")) { selected = null; renderMap(); renderRank(); renderDetail(); } });
   document.getElementById("rankList").addEventListener("click", (e) => {
     if (e.target.closest("#rankToggle")) { rankExpanded = !rankExpanded; renderRank(); return; }
     const r = e.target.closest(".rank-row"); if (!r) return;
