@@ -23,8 +23,8 @@
   // 지도 + 4개 구 마커
   const provs = GEO.provinces.map(p =>
     `<path class="hprov${p.short === "경기" ? " hi" : ""}" d="${p.d}"></path>`).join("");
-  const gw = W * 0.052, gh = gw * (H / W) * (935 / 1000);  // 구 확대 뷰 크기
-  const markR = gw * 0.028;
+  const gw = W * 0.115, gh = gw * (H / W) * (935 / 1000);  // 구 확대 뷰 크기(멀리서)
+  const markR = gw * 0.02;
   const markers = GU.map((g, i) =>
     `<g class="hmark" data-i="${i}" transform="translate(${g.pt[0].toFixed(1)},${g.pt[1].toFixed(1)})" opacity="0">
       <circle class="hmarker-pulse" r="${markR}"></circle>
