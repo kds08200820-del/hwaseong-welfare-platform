@@ -1,83 +1,92 @@
 /* =============================================================
-   대시보드 렌더링 (Chart.js 4)
-   지역 필터에 따라 모든 지표 갱신 · 라이트/다크 재렌더
+   지역 대시보드 — 화성 4개 구 → 29개 읍면동 계층 선택
+   데이터: HW_REGIONS (hwaseong-regions.js)
    ============================================================= */
 (function () {
-  const D = WELFARE_DATA;
-  let region = "both"; // both | ujeong | jangan
+  const H = HW_REGIONS;
+  let guKey = "city";     // city | manse | hyohaeng | byeongjeom | dongtan
+  let dongKey = null;     // 읍면동 key | null(구/전체)
   const charts = {};
 
-  /* CSS 변수에서 색상 읽기 (테마 대응) */
   const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+  const fmt = (n) => Math.round(n).toLocaleString("ko-KR");
   function palette() {
     return {
-      s1: css("--series-1"), s2: css("--series-2"), s3: css("--series-3"),
-      s4: css("--series-4"), s5: css("--series-5"), s6: css("--series-6"),
-      s7: css("--series-7"), s8: css("--series-8"),
-      ink: css("--text-primary"), sec: css("--text-secondary"),
-      muted: css("--text-muted"), grid: css("--grid"), surf: css("--surface-1"),
+      s1: css("--series-1"), s2: css("--series-2"), s3: css("--series-3"), s4: css("--series-4"),
+      ink: css("--text-primary"), sec: css("--text-secondary"), muted: css("--text-muted"),
+      grid: css("--grid"), surf: css("--surface-1"),
     };
   }
 
-  const fmt = (n) => n.toLocaleString("ko-KR");
-  const REGION_NAME = { both: "전체", ujeong: "우정읍", jangan: "장안면" };
-  // 색: 엔티티 고정 — 우정읍 = series-1, 장안면 = series-2
-  const rColor = (p) => ({ ujeong: p.s1, jangan: p.s2 });
-
-  function activeRegions() {
-    return region === "both" ? ["ujeong", "jangan"] : [region];
+  /* 현재 선택 지역 / 비교(화성 평균) */
+  function current() {
+    if (dongKey) return H.region(dongKey);
+    if (guKey === "city") return H.cityRegion();
+    return H.guRegion(guKey);
   }
+  function cityRef() { return H.cityRegion(); }
+  function isCity() { return guKey === "city" && !dongKey; }
 
-  /* ---------- Chart.js 공통 옵션 ---------- */
+  /* 하위 지역(막대 비교용): 전체→4구, 구/동→해당 구의 읍면동 */
+  function subRegions() {
+    if (guKey === "city") return H.gu.map(g => ({ key: g.key, ...pick(H.guRegion(g.key)), gu: true }));
+    const g = H.gu.find(x => x.key === guKey);
+    return g.dong.map(k => ({ key: k, ...pick(H.region(k)) }));
+  }
+  function pick(r) { return { name: r.name, pop: r.population, eld: r.elderlyRate }; }
+
+  /* ---------- Chart.js 공통 ---------- */
+  function mk(id, type, data, options) {
+    if (charts[id]) charts[id].destroy();
+    const el = document.getElementById(id); if (!el) return;
+    charts[id] = new Chart(el, { type, data, options });
+  }
   function baseOpts(p, extra = {}) {
     return Object.assign({
       responsive: true, maintainAspectRatio: false,
       plugins: {
-        legend: {
-          display: region === "both",
-          position: "bottom",
-          labels: { color: p.sec, font: { size: 13, family: css("--font") || "sans-serif" }, usePointStyle: true, pointStyleWidth: 12, padding: 16, boxHeight: 8 },
-        },
-        tooltip: {
-          backgroundColor: p.ink, titleColor: p.surf, bodyColor: p.surf,
-          padding: 10, cornerRadius: 8, displayColors: true, boxPadding: 4,
-          titleFont: { weight: "700" },
-        },
+        legend: { display: false, position: "bottom", labels: { color: p.sec, usePointStyle: true, pointStyleWidth: 12, boxHeight: 8, padding: 14 } },
+        tooltip: { backgroundColor: p.ink, titleColor: p.surf, bodyColor: p.surf, padding: 10, cornerRadius: 8 },
       },
     }, extra);
   }
-  function axis(p, unit) {
-    return {
-      grid: { color: p.grid, drawTicks: false },
-      border: { display: false },
-      ticks: { color: p.muted, font: { size: 12 }, padding: 8,
-        callback: (v) => fmt(v) + (unit || "") },
-    };
+  function xAxis(p, opt = {}) { return Object.assign({ grid: { display: false }, border: { display: false }, ticks: { color: p.muted, font: { size: 11 } } }, opt); }
+  function yAxis(p, opt = {}) { return Object.assign({ grid: { color: p.grid }, border: { display: false }, ticks: { color: p.muted, font: { size: 11 }, callback: (v) => fmt(v) } }, opt); }
+
+  /* ---------- 선택 UI ---------- */
+  function renderSelectors() {
+    // 구 탭
+    const guSeg = document.getElementById("guSeg");
+    const tabs = [{ key: "city", name: "화성시 전체" }, ...H.gu];
+    guSeg.innerHTML = tabs.map(t => `<button data-gu="${t.key}" class="${t.key === guKey ? "active" : ""}">${t.name}</button>`).join("");
+    // 읍면동 칩
+    const wrap = document.getElementById("dongSelect");
+    const chips = document.getElementById("dongChips");
+    if (guKey === "city") { wrap.style.display = "none"; chips.innerHTML = ""; return; }
+    wrap.style.display = "flex";
+    const g = H.gu.find(x => x.key === guKey);
+    const items = [{ key: "", name: g.name + " 전체" }, ...g.dong.map(k => ({ key: k, name: H.raw[k].name }))];
+    chips.innerHTML = items.map(it =>
+      `<button class="dong-chip${(it.key || null) === dongKey ? " on" : ""}" data-dong="${it.key}">${it.name}</button>`).join("");
   }
 
-  /* ================= 요약 지표 ================= */
+  /* ---------- 요약 지표 ---------- */
   function renderStats() {
-    const el = document.getElementById("statRow");
-    const rs = activeRegions();
-    const sum = (fn) => rs.reduce((a, k) => a + fn(k), 0);
-    const pop = sum(k => D.regions[k].population);
-    const hh = sum(k => D.regions[k].households);
-    const elderly = sum(k => Math.round(D.regions[k].population * D.regions[k].elderlyRate / 100));
-    const elderlyRate = (elderly / pop * 100);
-    const onePerson = activeRegions().reduce((a, k) => a + D.regions[k].onePersonHhRate * D.regions[k].households, 0) / hh;
-    const welfareTotal = D.welfare.categories.reduce((a, c) => a + sum(k => c[k]), 0);
-    const gr = D.needGrade(avgNeeds());
-
-    el.innerHTML = `
+    const r = current();
+    const welfareTotal = Object.values(r.welfare).reduce((a, b) => a + b, 0);
+    const needAvg = r.needs.reduce((a, b) => a + b, 0) / r.needs.length;
+    const gr = H.needGrade(needAvg);
+    const eldReal = r.demoElderlyReal;
+    document.getElementById("statRow").innerHTML = `
       <div class="stat">
-        <div class="label">총인구 (${REGION_NAME[region]}) <span class="badge good" style="font-size:.62rem;padding:1px 6px;">공식</span></div>
-        <div class="value">${fmt(pop)}<span class="unit">명</span></div>
-        <div class="sub">${fmt(hh)}세대 · 1인세대 ${onePerson.toFixed(0)}%</div>
+        <div class="label">총인구 (${r.name}) <span class="badge good" style="font-size:.62rem;padding:1px 6px;">공식</span></div>
+        <div class="value">${fmt(r.population)}<span class="unit">명</span></div>
+        <div class="sub">${fmt(r.households)}세대 · 1인세대 ${r.onePersonHhRate}%</div>
       </div>
       <div class="stat">
-        <div class="label">65세 이상 고령인구 <span class="badge good" style="font-size:.62rem;padding:1px 6px;">공식</span></div>
-        <div class="value">${fmt(elderly)}<span class="unit">명</span></div>
-        <div class="sub"><span class="up">▲ 고령화율 ${elderlyRate.toFixed(1)}%</span> · 초고령사회</div>
+        <div class="label">65세 이상 고령인구 <span class="badge ${eldReal ? "good" : "warning"}" style="font-size:.62rem;padding:1px 6px;">${eldReal ? "공식" : "추정"}</span></div>
+        <div class="value">${fmt(r.ageStructure[2])}<span class="unit">명</span></div>
+        <div class="sub"><span class="up">▲ 고령화율 ${r.elderlyRate}%</span>${r.elderlyRate >= 20 ? " · 초고령" : ""}</div>
       </div>
       <div class="stat">
         <div class="label">복지 대상 (중복 포함) <span class="badge warning" style="font-size:.62rem;padding:1px 6px;">추정</span></div>
@@ -86,204 +95,139 @@
       </div>
       <div class="stat">
         <div class="label">종합 필요도 등급</div>
-        <div class="value" style="font-size:1.7rem;">${avgNeeds().toFixed(0)}<span class="unit">/100</span></div>
+        <div class="value" style="font-size:1.7rem;">${needAvg.toFixed(0)}<span class="unit">/100</span></div>
         <div class="sub"><span class="badge ${gr.level}">${gr.label}</span></div>
       </div>`;
-    document.getElementById("metaLabel").textContent = `인구 기준 ${D.meta.updated} · 성별 ${D.meta.genderAsOf} · ${D.meta.source}`;
+    document.getElementById("metaLabel").textContent = `기준 ${H.meta.popAsOf} · ${H.meta.source}`;
   }
 
-  function avgNeeds() {
-    const rs = activeRegions();
-    let tot = 0, n = 0;
-    rs.forEach(k => D.needs[k].forEach(v => { tot += v; n++; }));
-    return tot / n;
-  }
-
-  /* ================= 연령 구조 (3대 연령, 공식) ================= */
+  /* ---------- 연령 구조 (% 구성비, 선택 vs 화성평균) ---------- */
   function renderAge(p) {
-    const ds = activeRegions().map(k => ({
-      label: D.regions[k].name, data: D.ageStructure[k],
-      backgroundColor: rColor(p)[k], borderRadius: 4, borderSkipped: false,
-      barPercentage: 0.72, categoryPercentage: 0.66,
+    const r = current(), c = cityRef();
+    const pctOf = (x) => [x.childRate, +(100 - x.childRate - x.elderlyRate).toFixed(1), x.elderlyRate];
+    const ds = [
+      { label: r.name, data: pctOf(r), backgroundColor: p.s1, borderRadius: 4, borderSkipped: false, barPercentage: 0.7, categoryPercentage: 0.66 },
+    ];
+    if (!isCity()) ds.push({ label: "화성시 평균", data: pctOf(c), backgroundColor: p.s2 + "88", borderRadius: 4, borderSkipped: false, barPercentage: 0.7, categoryPercentage: 0.66 });
+    mk("chartAge", "bar", { labels: H.ageLabels, datasets: ds }, baseOpts(p, {
+      plugins: { legend: { display: !isCity(), position: "bottom", labels: { color: p.sec, usePointStyle: true, pointStyleWidth: 12, boxHeight: 8, padding: 14 } },
+        tooltip: { backgroundColor: p.ink, titleColor: p.surf, bodyColor: p.surf, padding: 10, cornerRadius: 8, callbacks: { label: (x) => `${x.dataset.label}: ${x.parsed.y}%` } } },
+      scales: { x: xAxis(p, { ticks: { color: p.muted, font: { size: 12 } } }), y: yAxis(p, { ticks: { color: p.muted, callback: (v) => v + "%" } }) },
     }));
-    mk("chartAge", "bar", { labels: D.ageStructure.labels, datasets: ds },
-      baseOpts(p, { scales: { x: { grid: { display: false }, border: { display: false }, ticks: { color: p.muted, font: { size: 12 } } }, y: axis(p, "") } }));
   }
 
-  /* ================= 필요도 레이더 ================= */
+  /* ---------- 필요도 레이더 (선택 vs 화성평균) ---------- */
   function renderNeeds(p) {
-    const ds = activeRegions().map(k => {
-      const c = rColor(p)[k];
-      return {
-        label: D.regions[k].name, data: D.needs[k],
-        borderColor: c, backgroundColor: c + "33",
-        pointBackgroundColor: c, pointRadius: 4, pointHoverRadius: 6, borderWidth: 2,
-      };
-    });
-    mk("chartNeeds", "radar", { labels: D.needs.domains, datasets: ds },
-      baseOpts(p, {
-        scales: { r: {
-          min: 0, max: 100,
-          grid: { color: p.grid }, angleLines: { color: p.grid },
-          pointLabels: { color: p.sec, font: { size: 12 } },
-          ticks: { display: false, stepSize: 25 },
-        } },
-      }));
-  }
-
-  /* 공식 발표치는 큰 점, 추정치는 작은 점으로 구분 */
-  const ptRadius = () => D.trend.real.map(r => (r ? 5 : 2.5));
-  const ptStyle = () => D.trend.real.map(r => (r ? "rectRot" : "circle"));
-
-  /* ================= 총인구 추이 ================= */
-  function renderPop(p) {
-    const ds = activeRegions().map(k => {
-      const c = rColor(p)[k];
-      return {
-        label: D.regions[k].name, data: D.trend[k + "_pop"],
-        borderColor: c, backgroundColor: c + "22", borderWidth: 2,
-        pointRadius: ptRadius(), pointStyle: ptStyle(), pointHoverRadius: 7,
-        tension: 0.3, fill: false, pointBackgroundColor: c,
-      };
-    });
-    mk("chartPop", "line", { labels: D.trend.years, datasets: ds },
-      baseOpts(p, { interaction: { mode: "index", intersect: false },
-        scales: { x: { grid: { display: false }, border: { display: false }, ticks: { color: p.muted } }, y: axis(p, "") } }));
-  }
-
-  /* ================= 고령화율 추이 ================= */
-  function renderAging(p) {
-    const ds = activeRegions().map(k => {
-      const c = rColor(p)[k];
-      return {
-        label: D.regions[k].name, data: D.trend[k + "_elderly"],
-        borderColor: c, backgroundColor: c + "22", borderWidth: 2,
-        pointRadius: ptRadius(), pointStyle: ptStyle(), pointHoverRadius: 7, tension: 0.3, fill: false, pointBackgroundColor: c,
-      };
-    });
-    mk("chartAging", "line", { labels: D.trend.years, datasets: ds },
-      baseOpts(p, {
-        interaction: { mode: "index", intersect: false },
-        plugins: Object.assign(baseOpts(p).plugins, {
-          annotation: undefined,
-          tooltip: { callbacks: { label: (c) => `${c.dataset.label}: ${c.parsed.y}%` }, backgroundColor: p.ink, titleColor: p.surf, bodyColor: p.surf, padding: 10, cornerRadius: 8 },
-        }),
-        scales: { x: { grid: { display: false }, border: { display: false }, ticks: { color: p.muted } },
-          y: { grid: { color: p.grid }, border: { display: false }, min: 10,
-            ticks: { color: p.muted, callback: (v) => v + "%" } } },
-      }));
-  }
-
-  /* ================= 복지 대상 현황 ================= */
-  function renderWelfare(p) {
-    const labels = D.welfare.categories.map(c => c.label);
-    const ds = activeRegions().map(k => ({
-      label: D.regions[k].name, data: D.welfare.categories.map(c => c[k]),
-      backgroundColor: rColor(p)[k], borderRadius: 4, borderSkipped: false,
-      barPercentage: 0.74, categoryPercentage: 0.68,
+    const r = current(), c = cityRef();
+    const ds = [{ label: r.name, data: r.needs, borderColor: p.s1, backgroundColor: p.s1 + "33", pointBackgroundColor: p.s1, pointRadius: 4, borderWidth: 2 }];
+    if (!isCity()) ds.push({ label: "화성시 평균", data: c.needs, borderColor: p.s2, backgroundColor: p.s2 + "22", pointBackgroundColor: p.s2, pointRadius: 3, borderWidth: 1.5 });
+    mk("chartNeeds", "radar", { labels: H.needsDomains, datasets: ds }, baseOpts(p, {
+      plugins: { legend: { display: !isCity(), position: "bottom", labels: { color: p.sec, usePointStyle: true, pointStyleWidth: 12, boxHeight: 8, padding: 14 } } },
+      scales: { r: { min: 0, max: 100, grid: { color: p.grid }, angleLines: { color: p.grid }, pointLabels: { color: p.sec, font: { size: 12 } }, ticks: { display: false, stepSize: 25 } } },
     }));
-    mk("chartWelfare", "bar", { labels, datasets: ds },
+  }
+
+  /* ---------- 하위 지역별 인구 (막대) ---------- */
+  function renderPop(p) {
+    const subs = subRegions();
+    const cols = subs.map(s => (dongKey && s.key === dongKey) ? p.s1 : p.s1 + "99");
+    mk("chartPop", "bar", { labels: subs.map(s => s.name), datasets: [{ data: subs.map(s => s.pop), backgroundColor: cols, borderRadius: 4, borderSkipped: false, barPercentage: 0.72 }] },
+      baseOpts(p, {
+        plugins: { legend: { display: false }, tooltip: { backgroundColor: p.ink, titleColor: p.surf, bodyColor: p.surf, padding: 10, cornerRadius: 8, callbacks: { label: (x) => fmt(x.parsed.y) + "명" } } },
+        scales: { x: xAxis(p, { ticks: { color: p.muted, font: { size: 10 }, maxRotation: 45, minRotation: 0 } }), y: yAxis(p) },
+      }));
+    document.getElementById("popChartHint").textContent = guKey === "city" ? "4개 구 · 명" : `${H.gu.find(g => g.key === guKey).name} 읍면동 · 명`;
+  }
+
+  /* ---------- 하위 지역별 고령화율 (막대, 초고령 진하게) ---------- */
+  function renderAging(p) {
+    const subs = subRegions();
+    const cols = subs.map(s => s.eld >= 25 ? p.s4 : s.eld >= 20 ? p.s2 : s.eld >= 12 ? p.s1 : p.s1 + "77");
+    mk("chartAging", "bar", { labels: subs.map(s => s.name), datasets: [{ data: subs.map(s => s.eld), backgroundColor: cols, borderRadius: 4, borderSkipped: false, barPercentage: 0.72 }] },
+      baseOpts(p, {
+        plugins: { legend: { display: false }, tooltip: { backgroundColor: p.ink, titleColor: p.surf, bodyColor: p.surf, padding: 10, cornerRadius: 8, callbacks: { label: (x) => x.parsed.y + "%" } } },
+        scales: { x: xAxis(p, { ticks: { color: p.muted, font: { size: 10 }, maxRotation: 45 } }), y: yAxis(p, { ticks: { color: p.muted, callback: (v) => v + "%" } }) },
+      }));
+  }
+
+  /* ---------- 복지 대상 현황 (막대) ---------- */
+  function renderWelfare(p) {
+    const r = current();
+    const cats = H.welfareCats;
+    mk("chartWelfare", "bar", { labels: cats.map(c => c.label), datasets: [{ data: cats.map(c => r.welfare[c.key]), backgroundColor: p.s1, borderRadius: 4, borderSkipped: false, barPercentage: 0.68 }] },
       baseOpts(p, {
         indexAxis: "y",
-        scales: { x: axis(p, ""), y: { grid: { display: false }, border: { display: false }, ticks: { color: p.sec, font: { size: 12 } } } },
+        plugins: { legend: { display: false }, tooltip: { backgroundColor: p.ink, titleColor: p.surf, bodyColor: p.surf, padding: 10, cornerRadius: 8, callbacks: { label: (x) => fmt(x.parsed.x) } } },
+        scales: { x: xAxis(p, { grid: { color: p.grid }, ticks: { color: p.muted, callback: (v) => fmt(v) } }), y: xAxis(p, { ticks: { color: p.sec, font: { size: 12 } } }) },
       }));
   }
 
-  /* ================= 복지 인프라 ================= */
+  /* ---------- 복지 인프라 (막대) ---------- */
   function renderFacil(p) {
-    const ds = activeRegions().map(k => ({
-      label: D.regions[k].name, data: D.facilities[k],
-      backgroundColor: rColor(p)[k], borderRadius: 4, borderSkipped: false,
-      barPercentage: 0.72, categoryPercentage: 0.68,
-    }));
-    mk("chartFacil", "bar", { labels: D.facilities.labels, datasets: ds },
-      baseOpts(p, { scales: { x: { grid: { display: false }, border: { display: false }, ticks: { color: p.muted, font: { size: 10.5 } } }, y: axis(p, "") } }));
+    const r = current();
+    mk("chartFacil", "bar", { labels: H.facilLabels, datasets: [{ data: r.facilities, backgroundColor: p.s3, borderRadius: 4, borderSkipped: false, barPercentage: 0.7 }] },
+      baseOpts(p, {
+        plugins: { legend: { display: false }, tooltip: { backgroundColor: p.ink, titleColor: p.surf, bodyColor: p.surf, padding: 10, cornerRadius: 8, callbacks: { label: (x) => fmt(x.parsed.y) + "개소" } } },
+        scales: { x: xAxis(p, { ticks: { color: p.muted, font: { size: 10 } } }), y: yAxis(p) },
+      }));
   }
 
-  /* ================= 필요도 미터 ================= */
-  const STATUS_COLOR = {
-    critical: css("--status-critical") || "#d03b3b",
-    serious: css("--status-serious") || "#ec835a",
-    warning: css("--status-warning") || "#fab219",
-    good: css("--status-good") || "#0ca30c",
-  };
+  /* ---------- 필요도 미터 ---------- */
+  const STATUS = { critical: "--status-critical", serious: "--status-serious", warning: "--status-warning", good: "--status-good" };
   function renderMeters() {
-    const el = document.getElementById("needsMeters");
-    const rs = activeRegions();
-    // 지역 평균 (both면 두 지역 평균)
-    const domains = D.needs.domains.map((dm, i) => {
-      const v = rs.reduce((a, k) => a + D.needs[k][i], 0) / rs.length;
-      return { name: dm, val: v };
-    }).sort((a, b) => b.val - a.val);
-
-    el.innerHTML = domains.map(d => {
-      const gr = D.needGrade(d.val);
-      const col = STATUS_COLOR[gr.level] || css("--status-warning");
+    const r = current();
+    const rows = H.needsDomains.map((d, i) => ({ name: d, val: r.needs[i] })).sort((a, b) => b.val - a.val);
+    document.getElementById("needsMeters").innerHTML = rows.map(d => {
+      const gr = H.needGrade(d.val); const col = css(STATUS[gr.level]);
       return `<div class="meter-row">
         <span class="m-label">${d.name}</span>
         <div class="meter-track"><div class="meter-fill" style="width:${d.val}%;background:${col};"></div></div>
-        <span class="m-val">${d.val.toFixed(0)} <span class="badge ${gr.level}" style="margin-left:4px;">${gr.label}</span></span>
+        <span class="m-val">${d.val} <span class="badge ${gr.level}" style="margin-left:4px;">${gr.label}</span></span>
       </div>`;
     }).join("");
-    document.getElementById("needsRegionLabel").textContent = REGION_NAME[region] + " 기준";
+    document.getElementById("needsRegionLabel").textContent = r.name + " 기준";
   }
 
-  /* ================= 데이터 표 ================= */
+  /* ---------- 데이터 표 (동적) ---------- */
   function renderTable() {
+    const r = current();
+    document.getElementById("dataTableHead").innerHTML =
+      `<th>구분</th><th class="num">${r.name}</th><th>단위</th><th>구분</th>`;
     const tb = document.querySelector("#dataTable tbody");
-    tb.innerHTML = D.welfare.categories.map(c => `
+    tb.innerHTML = H.welfareCats.map(c => `
       <tr>
         <td>${c.icon} ${c.label}</td>
-        <td class="num">${fmt(c.ujeong)}</td>
-        <td class="num">${fmt(c.jangan)}</td>
-        <td class="num"><b>${fmt(c.ujeong + c.jangan)}</b></td>
+        <td class="num"><b>${fmt(r.welfare[c.key])}</b></td>
         <td>${c.unit}</td>
+        <td style="color:var(--text-muted);font-size:.82rem;">추정</td>
       </tr>`).join("");
-    document.getElementById("tableSource").textContent = `출처: ${D.meta.source} · 기준 ${D.meta.updated}`;
+    document.getElementById("tableSource").textContent = `${H.meta.note} · 기준 ${H.meta.popAsOf}`;
   }
 
-  /* ---------- 차트 생성/갱신 헬퍼 ---------- */
-  function mk(id, type, data, options) {
-    if (charts[id]) charts[id].destroy();
-    charts[id] = new Chart(document.getElementById(id), { type, data, options });
-  }
-
-  /* ---------- 전체 렌더 ---------- */
+  /* ---------- 렌더 ---------- */
   function renderAll() {
     const p = palette();
+    renderSelectors();
     renderStats();
-    renderAge(p);
-    renderNeeds(p);
-    renderPop(p);
-    renderAging(p);
-    renderWelfare(p);
-    renderFacil(p);
-    renderMeters();
-    renderTable();
+    renderAge(p); renderNeeds(p); renderPop(p); renderAging(p);
+    renderWelfare(p); renderFacil(p); renderMeters(); renderTable();
   }
 
-  /* ---------- 필터 이벤트 ---------- */
-  document.getElementById("regionSeg").addEventListener("click", (e) => {
-    const btn = e.target.closest("button");
-    if (!btn) return;
-    region = btn.dataset.region;
-    document.querySelectorAll("#regionSeg button").forEach(b => b.classList.toggle("active", b === btn));
-    renderAll();
+  /* ---------- 이벤트 ---------- */
+  document.getElementById("guSeg").addEventListener("click", (e) => {
+    const b = e.target.closest("button"); if (!b) return;
+    guKey = b.dataset.gu; dongKey = null; renderAll();
   });
-
+  document.getElementById("dongChips").addEventListener("click", (e) => {
+    const b = e.target.closest(".dong-chip"); if (!b) return;
+    dongKey = b.dataset.dong || null; renderAll();
+  });
   document.addEventListener("themechange", renderAll);
-  // 실시간 프록시가 데이터를 덮어쓰면 다시 렌더
-  document.addEventListener("datalive", () => { console.info("[data] 실시간 데이터 반영"); renderAll(); });
 
   if (typeof Chart !== "undefined") {
     Chart.defaults.font.family = "system-ui, -apple-system, 'Segoe UI', 'Malgun Gothic', sans-serif";
     renderAll();
-    // server/ 프록시가 켜져 있으면 실데이터로 갱신 (없으면 무시)
-    if (typeof fetchLiveData === "function") fetchLiveData();
   } else {
-    document.querySelectorAll(".chart-box").forEach(b => {
-      b.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:40px;">차트 라이브러리를 불러오지 못했습니다. 인터넷 연결을 확인해 주세요.</p>';
-    });
-    renderStats(); renderMeters(); renderTable();
+    renderSelectors(); renderStats(); renderMeters(); renderTable();
   }
 })();

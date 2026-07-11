@@ -545,3 +545,14 @@ table.data td.num, table.data th.num { text-align: right; }
   .fac-map { min-height: 320px; }
   .fac-list { max-height: 280px; }
 }
+
+/* ---------- 대시보드 읍면동 2단 선택 ---------- */
+.dong-select { display: flex; align-items: center; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+.dong-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.dong-chip {
+  border: 1px solid var(--border); background: var(--surface-1); color: var(--text-secondary);
+  border-radius: 999px; padding: 5px 12px; font-size: .84rem; font-weight: 600; cursor: pointer; font-family: var(--font);
+}
+.dong-chip:hover { background: var(--brand-wash); color: var(--brand); }
+.dong-chip.on { background: var(--brand); color: #fff; border-color: var(--brand); }
+@media (max-width: 640px) { .dong-chips { max-height: 132px; overflow-y: auto; } }

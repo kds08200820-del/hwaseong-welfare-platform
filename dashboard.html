@@ -35,26 +35,26 @@
 <section class="section-tight">
   <div class="wrap">
     <span class="eyebrow">지역 복지 데이터 대시보드</span>
-    <h2 style="margin-bottom:8px;">우정읍 · 장안면 복지 현황 한눈에 보기</h2>
+    <h2 style="margin-bottom:8px;">화성시 복지 현황 한눈에 보기</h2>
     <p class="lede" style="margin-bottom:20px;">
-      인구 구조, 복지 대상 현황, 복지 인프라, 지역별 필요도를 시각화했습니다.
-      지역을 선택하면 모든 지표가 함께 갱신됩니다.
+      화성시 4개 구(만세·효행·병점·동탄)와 29개 읍면동의 인구·연령·복지 대상·필요도를 시각화했습니다.
+      <b>구를 고르고 읍면동을 선택</b>하면 모든 지표가 함께 갱신됩니다.
     </p>
 
     <div class="data-note">
       <span>ℹ️</span>
-      <span><b>데이터 안내</b> — <b>인구·연령·세대·성별</b>은 행정안전부 주민등록 인구통계·경기도 화성특례시 공식 인구현황 <b>실데이터</b>입니다(인구 2026.06 / 성별 2025.08 기준). <b>복지대상·인프라</b>는 읍면 단위 공표 미확보로 화성시 비율을 적용한 <b>추정치</b>이며, <a href="https://www.data.go.kr" target="_blank" rel="noopener">공공데이터포털</a> OpenAPI 연동 시 실값으로 갱신됩니다.</span>
+      <span><b>데이터 안내</b> — <b>인구·세대·연령·고령화율</b>은 경기도 화성특례시 공식 인구현황·행안부/POPIN <b>실데이터</b>입니다(2026.03~06). <b>복지대상·인프라</b>는 읍면동 단위 공표가 없어 화성시 총계를 <b>인구·고령 비례로 배분한 추정치</b>, <b>필요도</b>는 조합 산정 지수입니다. (동탄 9개 동 개별 인구는 구 총계 배분 추정)</span>
     </div>
 
-    <!-- 필터 -->
-    <div class="filters" style="margin-top:22px;">
-      <span class="flabel">지역 선택</span>
-      <div class="seg" id="regionSeg">
-        <button data-region="both" class="active">전체</button>
-        <button data-region="ujeong">우정읍</button>
-        <button data-region="jangan">장안면</button>
-      </div>
-      <span style="margin-left:auto;font-size:.82rem;color:var(--text-muted);" id="metaLabel"></span>
+    <!-- 지역 선택: 구 → 읍면동 2단 -->
+    <div class="filters" style="margin-top:22px;flex-wrap:wrap;">
+      <span class="flabel">구 선택</span>
+      <div class="seg" id="guSeg"></div>
+      <span style="margin-left:auto;font-size:.8rem;color:var(--text-muted);" id="metaLabel"></span>
+    </div>
+    <div class="dong-select" id="dongSelect">
+      <span class="flabel" style="flex:0 0 auto;">읍면동</span>
+      <div class="dong-chips" id="dongChips"></div>
     </div>
   </div>
 </section>
@@ -75,7 +75,7 @@
       <div class="panel">
         <div class="panel-head">
           <h3>인구 연령 구조 <span class="badge good" style="font-size:.66rem;">공식</span></h3>
-          <span class="hint">단위: 명 · 2026.06</span>
+          <span class="hint">단위: 명 · 선택 지역 vs 화성 평균</span>
         </div>
         <div class="chart-box" style="height:300px;"><canvas id="chartAge"></canvas></div>
         <p class="note">유소년보다 고령인구가 압도적으로 많은 역피라미드 구조 — 장안면은 고령 비율 36%로 초고령사회입니다.</p>
@@ -93,24 +93,24 @@
     </div>
 
     <div class="grid grid-2" style="gap:22px;">
-      <!-- 총인구 추이 -->
+      <!-- 읍면동별 인구 -->
       <div class="panel">
         <div class="panel-head">
-          <h3>총인구 추이 (2022–2026)</h3>
-          <span class="hint">◆ 공식발표 · ● 추정</span>
+          <h3>하위 지역별 인구 <span class="badge good" style="font-size:.66rem;">공식</span></h3>
+          <span class="hint" id="popChartHint">단위: 명</span>
         </div>
-        <div class="chart-box" style="height:280px;"><canvas id="chartPop"></canvas></div>
-        <p class="note">두 지역 모두 완만한 인구 감소세. 마름모(◆) 지점은 공식 발표치(2025·2026)입니다.</p>
+        <div class="chart-box" style="height:300px;"><canvas id="chartPop"></canvas></div>
+        <p class="note">선택한 구의 읍면동별 인구입니다(전체 선택 시 4개 구 비교).</p>
       </div>
 
-      <!-- 고령화율 추이 -->
+      <!-- 읍면동별 고령화율 -->
       <div class="panel">
         <div class="panel-head">
-          <h3>고령화율 추이 (2022–2026)</h3>
-          <span class="hint">65세+ 비율 % · ◆공식 ●추정</span>
+          <h3>하위 지역별 고령화율 <span class="badge good" style="font-size:.66rem;">공식</span></h3>
+          <span class="hint">65세+ 비율 %</span>
         </div>
-        <div class="chart-box" style="height:280px;"><canvas id="chartAging"></canvas></div>
-        <p class="note">초고령사회 기준(20%)을 크게 초과 — 우정읍 29.1%, 장안면 36.0%로 계속 상승 중입니다.</p>
+        <div class="chart-box" style="height:300px;"><canvas id="chartAging"></canvas></div>
+        <p class="note">읍면동별 고령화율 — 초고령(20%↑) 지역은 진하게 표시됩니다(장안 36%·우정 29% 등).</p>
       </div>
     </div>
 
@@ -154,15 +154,7 @@
       </div>
       <div class="table-scroll">
         <table class="data" id="dataTable">
-          <thead>
-            <tr>
-              <th>구분</th>
-              <th class="num">우정읍</th>
-              <th class="num">장안면</th>
-              <th class="num">합계</th>
-              <th>단위</th>
-            </tr>
-          </thead>
+          <thead><tr id="dataTableHead"></tr></thead>
           <tbody></tbody>
         </table>
       </div>
@@ -231,7 +223,7 @@
 </footer>
 
 <script src="js/chart.umd.min.js"></script>
-<script src="js/data.js"></script>
+<script src="js/hwaseong-regions.js"></script>
 <script src="js/dashboard.js"></script>
 <script src="js/hwaseong-gu.js"></script>
 <script src="js/hwaseong-gu-view.js"></script>
