@@ -15,6 +15,7 @@
     { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ],
   "shortcuts": [
+    { "name": "사업 소개", "url": "./business.html" },
     { "name": "전국 복지 지도", "url": "./map.html" },
     { "name": "지역 대시보드", "url": "./dashboard.html" }
   ]

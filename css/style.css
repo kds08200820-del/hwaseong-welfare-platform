@@ -102,6 +102,8 @@ p { margin: 0 0 1em; }
 .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 20px; }
 .section { padding: 72px 0; }
 .section-tight { padding: 44px 0; }
+/* 스티키 헤더가 앵커 타깃을 가리지 않도록 */
+section[id] { scroll-margin-top: 76px; }
 .eyebrow {
   display: inline-flex; align-items: center; gap: 10px; font-size: .78rem; font-weight: 700;
   letter-spacing: .14em; text-transform: uppercase; color: var(--brand); margin-bottom: 14px;
@@ -288,11 +290,13 @@ h1 { font-weight: 600; }
 }
 .filters .flabel { font-size: .85rem; font-weight: 700; color: var(--text-secondary); margin-right: 4px; }
 .seg { display: inline-flex; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 3px; }
-.seg button {
+.seg button, .seg a {
   border: none; background: transparent; padding: 7px 15px; border-radius: 8px; cursor: pointer;
   font-weight: 600; font-size: .9rem; color: var(--text-secondary); font-family: var(--font);
 }
-.seg button.active { background: var(--brand); color: #fff; }
+.seg a { display: inline-block; }
+.seg a:hover { text-decoration: none; color: var(--brand); }
+.seg button.active, .seg a.active { background: var(--brand); color: #fff; }
 .seg button:disabled { opacity: .38; cursor: not-allowed; }
 
 /* legend */
@@ -501,7 +505,7 @@ table.data td.num, table.data th.num { text-align: right; }
   .cta-band { padding: 36px 22px; }
   .filters { flex-wrap: wrap; gap: 8px; }
   .filters .seg { overflow-x: auto; max-width: 100%; -webkit-overflow-scrolling: touch; }
-  .filters .seg button { white-space: nowrap; }
+  .filters .seg button, .filters .seg a { white-space: nowrap; }
   .kmap-wrap { max-width: 100%; }
   table.data th, table.data td { padding: 9px 10px; font-size: .86rem; }
   .stat .value { font-size: 1.8rem; }

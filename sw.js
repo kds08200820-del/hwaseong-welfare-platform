@@ -1,11 +1,11 @@
 /* 화성복지플랫폼 서비스워커 — 앱 셸 캐시(오프라인 지원) */
-const CACHE = "ieum-welfare-v1";
+const CACHE = "ieum-welfare-v3";
 const ASSETS = [
-  "./", "./index.html", "./dashboard.html", "./map.html", "./services.html", "./about.html",
+  "./", "./index.html", "./business.html", "./dashboard.html", "./map.html", "./services.html", "./about.html",
   "./css/style.css",
   "./js/main.js", "./js/data.js", "./js/dashboard.js", "./js/nationwide.js",
   "./js/kr-topo.js", "./js/kr-sigungu-topo.js", "./js/sigungu-data.js",
-  "./js/kr-map.js", "./js/map.js", "./js/hero-map.js",
+  "./js/kr-map.js", "./js/map.js", "./js/hero-map.js", "./js/hwaseong-regions.js",
   "./js/hwaseong-gu.js", "./js/hwaseong-gu-view.js", "./js/chart.umd.min.js",
   "./logo-mark.png", "./icon-192.png", "./icon-512.png", "./apple-touch-icon.png",
 ];
