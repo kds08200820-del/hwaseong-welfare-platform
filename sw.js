@@ -1,5 +1,5 @@
 /* 화성복지플랫폼 서비스워커 — 앱 셸 캐시(오프라인 지원) */
-const CACHE = "ieum-welfare-v4";
+const CACHE = "ieum-welfare-v5";
 const ASSETS = [
   "./", "./index.html", "./business.html", "./dashboard.html", "./map.html", "./services.html", "./about.html",
   "./css/style.css",
