@@ -56,7 +56,7 @@ const KRGeo = (function () {
     const VBH = (maxY - minY) * scale;
     const project = ([lo, la]) => [(lo - minX) * kx * scale, (maxY - la) * scale];
     items.forEach(p => {
-      let d = "", best = null, bestArea = -1;
+      let d = "", best = null, bestArea = -1, bw = 0, bh = 0;
       p.rings.forEach(r => {
         let seg = "", ax = Infinity, bx = -Infinity, ay = Infinity, by = -Infinity;
         r.forEach((pt, i) => {
@@ -66,9 +66,9 @@ const KRGeo = (function () {
         });
         seg += "Z"; d += seg;
         const area = (bx - ax) * (by - ay);
-        if (area > bestArea) { bestArea = area; best = [(ax + bx) / 2, (ay + by) / 2]; }
+        if (area > bestArea) { bestArea = area; best = [(ax + bx) / 2, (ay + by) / 2]; bw = bx - ax; bh = by - ay; }
       });
-      p.d = d; p.cx = best[0]; p.cy = best[1];
+      p.d = d; p.cx = best[0]; p.cy = best[1]; p.bw = bw; p.bh = bh;
     });
     return { items, viewBox: `0 0 ${VBW.toFixed(0)} ${VBH.toFixed(0)}`, w: VBW, h: VBH,
       project, bounds: { minX, maxX, minY, maxY, kx, scale } };

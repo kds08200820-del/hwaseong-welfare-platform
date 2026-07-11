@@ -142,10 +142,17 @@
       const fill = f.v != null ? sc.color(f.v) : noData;
       return `<path class="province${sel}" d="${f.p.d}" fill="${fill}" data-code="${f.p.code}"></path>`;
     }).join("");
-    const labels = feats.map(f => {
-      const nm = f.p.name.replace(/(특별자치시|특별자치도)/, "");
-      return `<text class="map-label" style="font-size:11px;pointer-events:none" x="${f.p.cx.toFixed(0)}" y="${f.p.cy.toFixed(0)}"
-        text-anchor="middle" fill="${f.v != null && sc.isDark(f.v) ? "#fff" : "#0b0b0b"}" stroke="rgba(255,255,255,.55)" stroke-width="2">${nm}</text>`;
+    // 라벨: 통합시 구는 시 이름으로 합치고, 같은 이름은 한 번만, 작은 곳은 숨김(호버로 확인)
+    const simplify = (n) => n.replace(/(특별자치시|특별자치도|광역시|특별시)/, "").replace(/^(.{1,4}시).*(구)$/, "$1");
+    const minW = 40, minH = 26;
+    const seenLbl = new Set();
+    const labels = [...feats].sort((a, b) => (b.p.bw * b.p.bh) - (a.p.bw * a.p.bh)).map(f => {
+      const nm = simplify(f.p.name);
+      if (seenLbl.has(nm) || f.p.bw < minW || f.p.bh < minH) return "";
+      seenLbl.add(nm);
+      const dark = f.v != null && sc.isDark(f.v);
+      return `<text class="map-label" style="font-size:10.5px;pointer-events:none;font-weight:700" x="${f.p.cx.toFixed(0)}" y="${f.p.cy.toFixed(0)}"
+        text-anchor="middle" dominant-baseline="middle" fill="${dark ? "#fff" : "#0b0b0b"}" stroke="${dark ? "rgba(0,0,0,.35)" : "rgba(255,255,255,.8)"}" stroke-width="2.4" paint-order="stroke">${nm}</text>`;
     }).join("");
     wrap.innerHTML = `<svg viewBox="${geo.viewBox}" role="img" aria-label="${sido.name} 시군구 ${SGG_LABEL[mk]} 지도"><g>${paths}</g><g>${labels}</g></svg>`;
 
