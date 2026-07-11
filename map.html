@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>전국 복지 지도 — 화성복지플랫폼</title>
 <meta name="description" content="전국 17개 시도 복지시설·복지지표 분포를 지도로 시각화. 노인여가복지시설·어린이집·등록장애인·인구·고령화율을 시도별로 구분해 확인.">
+<link rel="stylesheet" href="css/leaflet.css">
 <link rel="stylesheet" href="css/style.css">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#1428a0">
@@ -104,6 +105,24 @@
   </div>
 </section>
 
+<!-- 우정읍·장안면 실제 복지시설 지도 (무료 Leaflet+OSM) -->
+<section class="section-tight">
+  <div class="wrap">
+    <div class="panel">
+      <div class="panel-head">
+        <h3>우정읍·장안면 복지시설 위치 지도 <span class="badge good" style="font-size:.62rem;">실제 좌표</span></h3>
+        <span class="hint">OpenStreetMap · 실증지역</span>
+      </div>
+      <p class="note" style="margin:0 0 12px;">실증지역(우정읍·장안면)의 <b>실제 복지시설 위치</b>입니다(경로당·지역아동센터·행정복지센터). 유형을 눌러 필터링하고, 마커·목록을 클릭하면 상세가 표시됩니다.</p>
+      <div class="fac-legend" id="facLegend"></div>
+      <div class="fac-layout">
+        <div class="fac-map" id="facMap"></div>
+        <div class="fac-list" id="facList"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- 시설 구성 비교 차트 -->
 <section class="section-tight">
   <div class="wrap">
@@ -153,6 +172,9 @@
 <script src="js/sigungu-data.js"></script>
 <script src="js/kr-map.js"></script>
 <script src="js/map.js"></script>
+<script src="js/leaflet.js"></script>
+<script src="js/facilities.js"></script>
+<script src="js/facility-map.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

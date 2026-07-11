@@ -505,3 +505,34 @@ table.data td.num, table.data th.num { text-align: right; }
   .site-header { padding-top: env(safe-area-inset-top); }
   .hero-replay { bottom: calc(20px + env(safe-area-inset-bottom)); }
 }
+
+/* ---------- 복지시설 지도 (Leaflet+OSM) ---------- */
+.fac-legend { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.fac-chip {
+  display: inline-flex; align-items: center; gap: 7px; font-size: .84rem; font-weight: 600;
+  padding: 6px 12px; border-radius: 999px; border: 1px solid var(--border);
+  background: var(--surface-1); color: var(--text-secondary); cursor: pointer; font-family: var(--font);
+}
+.fac-chip.on { background: var(--brand-wash); color: var(--brand); border-color: var(--brand); }
+.fac-chip b { color: var(--text-primary); }
+.fac-dot { width: 10px; height: 10px; border-radius: 50%; flex: 0 0 auto; }
+.fac-layout { display: grid; grid-template-columns: 1.5fr 1fr; gap: 16px; align-items: stretch; }
+.fac-map { min-height: 440px; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); background: var(--surface-2); z-index: 0; }
+.fac-map-msg { display: grid; place-items: center; height: 100%; padding: 24px; text-align: center; color: var(--text-secondary); font-size: .92rem; }
+.fac-list { max-height: 440px; overflow-y: auto; display: flex; flex-direction: column; gap: 2px; padding-right: 4px; }
+.fac-item {
+  display: flex; align-items: center; gap: 10px; padding: 10px 8px; border-radius: 8px; width: 100%;
+  color: var(--text-primary); border: none; border-bottom: 1px solid var(--grid); background: transparent;
+  cursor: pointer; text-align: left; font-family: var(--font);
+}
+.fac-item:hover { background: var(--brand-wash); }
+.fac-body { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.fac-body b { font-size: .9rem; }
+.fac-addr { font-size: .78rem; color: var(--text-muted); }
+.fac-cat { font-size: .72rem; color: var(--text-secondary); border: 1px solid var(--border); border-radius: 6px; padding: 1px 7px; flex: 0 0 auto; }
+.leaflet-popup-content { font-family: var(--font); font-size: .86rem; line-height: 1.5; }
+@media (max-width: 720px) {
+  .fac-layout { grid-template-columns: 1fr; }
+  .fac-map { min-height: 320px; }
+  .fac-list { max-height: 280px; }
+}
