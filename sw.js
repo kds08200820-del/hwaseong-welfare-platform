@@ -1,5 +1,5 @@
 /* 화성복지플랫폼 서비스워커 — 앱 셸 캐시(오프라인 지원) */
-const CACHE = "ieum-welfare-v5";
+const CACHE = "ieum-welfare-v6";
 const ASSETS = [
   "./", "./index.html", "./business.html", "./dashboard.html", "./map.html", "./services.html", "./about.html",
   "./css/style.css",
@@ -7,7 +7,7 @@ const ASSETS = [
   "./js/kr-topo.js", "./js/kr-sigungu-topo.js", "./js/sigungu-data.js",
   "./js/kr-map.js", "./js/map.js", "./js/hero-map.js", "./js/hwaseong-regions.js",
   "./js/hwaseong-gu.js", "./js/hwaseong-gu-view.js", "./js/chart.umd.min.js",
-  "./logo-mark.png", "./icon-192.png", "./icon-512.png", "./apple-touch-icon.png",
+  "./logo-mark.png", "./logo-mark-dark.png", "./icon-192.png", "./icon-512.png", "./apple-touch-icon.png",
 ];
 
 self.addEventListener("install", (e) => {
